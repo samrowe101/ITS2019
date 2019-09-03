@@ -11,17 +11,16 @@ output:
     
 ---
 
-# NOTE TO READER
-
-<br>
-Download dataset for [Quarter-level outcomes](https://www.google.com)
-
-
-<br>
-<br>
 <br>
 
-```{css}
+## Download all datasets [HERE](https://github.com/samrowe101/ITS2019/raw/master/JDSITS2019.zip)
+
+
+<br>
+<br>
+<br>
+
+```{css, include=FALSE}
 pre code {
  white-space: 
 }
@@ -32,17 +31,26 @@ library(knitr)
 #Windows
 knitr::opts_knit$set(root.dir = "C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT")
 
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+
 #Mac
 #knitr::opts_knit$set(root.dir = "~/Dropbox/R backup/Lockout - R/LOCKOUT")
 
 ```
 
 
-
+<br>
+<br>
 
 # Evaluate Data
 
-## Show first 10 rows of baseline
+<br>
+<br>
+
+## Show first 10 rows of dataset
+
+<br>
+<br>
 
 ```{r}
 load(file="lockqtrdat.Rdata")
@@ -51,8 +59,8 @@ lockqtr = lockqtr %>%
   mutate(Tx = recode(lockqtr$Tx,
                      "0" = "Orbeseal", "1" = "Lockout"))
 Desc1 <- lockqtr %>% subset(select=c(FARMID,Cow,QTR,Tx,Age,Parity,IMIDO,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,PCSampDIM,IMIPC,Cure,NewIMI))
-head(Desc1, n=10) %>% kable()
-#write.csv(lockqtr,"ITS2019IMI.csv")
+head(lockqtr, n=10) %>% kable()
+
 ```
 
 <br>
@@ -64,7 +72,7 @@ head(Desc1, n=10) %>% kable()
 library(summarytools)
 
 #opts_chunk$set(comment = NA, prompt = FALSE, cache = FALSE, results = 'asis')
-print(summarytools::dfSummary(Desc1, valid.col=FALSE,graph.magnif=0.5,varnumbers=F,style="grid"))
+print(summarytools::dfSummary(lockqtr, valid.col=FALSE,graph.magnif=0.5,varnumbers=F,style="grid"))
 
 
 ```
@@ -87,11 +95,17 @@ table1::table1(~ factor(FARMID) + Age + Parity + factor(IMIDO) + SCCDO + MYDO + 
 table1::table1(~ Age + Parity + SCCDO + MYDO + CM1 + PeakSCC + as.numeric(DPlength) + as.numeric(PCSampDIM) + factor(IMIDO) + factor(IMIPC) + factor(Cure) + factor(NewIMI) | factor(FARMID), data=lockqtr)
 ```
 
+<br>
+<br>
+
 # Outcome 1: Cure
 ```{r}
 library(gmodels)
 CrossTable(lockqtr$Tx,lockqtr$Cure,prop.c=FALSE,prop.t=FALSE,prop.chisq = FALSE)
 ```
+
+<br>
+<br>
 
 ## Logistic regression model for dry period cure
 ## Model building plan
@@ -109,6 +123,9 @@ Step 4: Investigate potential effect measure modification
 Step 5: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if odds ratio for algorithm or culture changes by >10% after removing the covariate, the covariate is retained in the model)
 
 Step 6: Report final model
+
+<br>
+<br>
 
 ### Step 1: DAG
 
@@ -980,11 +997,16 @@ Intraclass correlation
 ```
 
 
+<br>
+<br>
 
 # Outcome 2: IMI at Calving
 ```{r}
 CrossTable(lockqtr$Tx,lockqtr$IMIPC,prop.c=FALSE,prop.t=FALSE,prop.chisq = FALSE)
 ```
+
+<br>
+<br>
 
 ## Logistic regression model for IMI at calving
 ## Model building plan
@@ -1000,6 +1022,9 @@ Step 3: Investigate potential effect measure modification
 Step 4: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if odds ratio for algorithm or culture changes by >10% after removing the covariate, the covariate is retained in the model)
 
 Step 5: Report final model
+
+<br>
+<br>
 
 ### Step 1: DAG
 
@@ -1893,11 +1918,16 @@ Intraclass correlation
 
 
 
+<br>
+<br>
 
 # Outcome 3: New IMI
 ```{r}
 CrossTable(lockqtr$Tx,lockqtr$NewIMI,prop.c=FALSE,prop.t=FALSE,prop.chisq = FALSE)
 ```
+
+<br>
+<br>
 
 ## Logistic regression model for new IMI
 ## Model building plan
@@ -1913,6 +1943,9 @@ Step 3: Investigate potential effect measure modification
 Step 4: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if odds ratio for algorithm or culture changes by >10% after removing the covariate, the covariate is retained in the model)
 
 Step 5: Report final model
+
+<br>
+<br>
 
 ### Step 1: DAG
 This is used to identify variables that could be confounders if they are not balanced between treatment groups. 
