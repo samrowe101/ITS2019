@@ -7,9 +7,7 @@ output:
   html_document:
     df_print: paged
     toc: true
-  html_notebook:
-    toc: yes
-  
+
 ---
 
 <br>
@@ -64,7 +62,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 # Evaluate Data
 ## Show first 10 rows of baseline
 ```{r}
-Desc1 <- lockcow %>% select(Cow,FARMID,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,CM2,Rem2)
+Desc1 <- lockcow %>% subset(select=c(Cow,FARMID,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,CM2,Rem2))
 head(Desc1, n=10)
 ```
 
@@ -787,7 +785,7 @@ head(DHIcheck, n=10)
 # Inspect data
 ```{r}
 lockcowdhi <- lockcowdhi[!is.na(lockcowdhi$Tx),]
-DHIoutcome <- lockcowdhi %>% select(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC)
+DHIoutcome <- lockcowdhi %>% subset(select=c(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC))
 print(summarytools::dfSummary(DHIoutcome,valid.col=FALSE, graph.magnif=0.8, style="grid"))
 
 ```

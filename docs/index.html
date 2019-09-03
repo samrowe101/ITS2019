@@ -12,7 +12,7 @@
 <meta name="author" content="Sam Rowe (samrowe101@gmail.com)" />
 
 
-<title>Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: quarter-level outcomes</title>
+<title>Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Impact on Quarter-Level Dry Period IMI Dynamics</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -291,12 +291,12 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Selective Dry Cow Therapy Analysis</a>
+      <a class="navbar-brand" href="index.html">2019 Internal Tealant Trial</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Analysis log</a>
+  <a href="index.html">Dry period IMI dynamics</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -310,7 +310,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: quarter-level outcomes</h1>
+<h1 class="title toc-ignore">Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Impact on Quarter-Level Dry Period IMI Dynamics</h1>
 <h4 class="author">Sam Rowe (<a href="mailto:samrowe101@gmail.com" class="email">samrowe101@gmail.com</a>)</h4>
 <h4 class="date">September 1st, 2019</h4>
 
@@ -372,19 +372,11 @@ knitr::opts_knit$set(root.dir = &quot;C:/Users/rowe0122/Dropbox/R backup/Lockout
 <div id="show-first-10-rows-of-baseline" class="section level2">
 <h2>Show first 10 rows of baseline</h2>
 <pre class="r"><code>load(file=&quot;lockqtrdat.Rdata&quot;)
-library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>lockqtr = lockqtr %&gt;%
+library(dplyr)
+lockqtr = lockqtr %&gt;%
   mutate(Tx = recode(lockqtr$Tx,
                      &quot;0&quot; = &quot;Orbeseal&quot;, &quot;1&quot; = &quot;Lockout&quot;))
-Desc1 &lt;- lockqtr %&gt;% select(FARMID,Cow,QTR,Tx,Age,Parity,IMIDO,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,PCSampDIM,IMIPC,Cure,NewIMI)
+Desc1 &lt;- lockqtr %&gt;% subset(select=c(FARMID,Cow,QTR,Tx,Age,Parity,IMIDO,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,PCSampDIM,IMIPC,Cure,NewIMI))
 head(Desc1, n=10) %&gt;% kable()</code></pre>
 <table>
 <thead>
@@ -605,11 +597,9 @@ head(Desc1, n=10) %&gt;% kable()</code></pre>
 </div>
 <div id="inspect-data" class="section level2">
 <h2>Inspect Data</h2>
-<pre class="r"><code>library(summarytools)</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;pryr&#39;:
-##   method      from
-##   print.bytes Rcpp</code></pre>
-<pre class="r"><code>#opts_chunk$set(comment = NA, prompt = FALSE, cache = FALSE, results = &#39;asis&#39;)
+<pre class="r"><code>library(summarytools)
+
+#opts_chunk$set(comment = NA, prompt = FALSE, cache = FALSE, results = &#39;asis&#39;)
 print(summarytools::dfSummary(Desc1, valid.col=FALSE,graph.magnif=0.5,varnumbers=F,style=&quot;grid&quot;))</code></pre>
 <pre><code>## Data Frame Summary  
 ##   
@@ -1417,13 +1407,8 @@ CrossTable(lockqtr$Tx,lockqtr$Cure,prop.c=FALSE,prop.t=FALSE,prop.chisq = FALSE)
 <div id="step-1-dag" class="section level3">
 <h3>Step 1: DAG</h3>
 <p>This is used to identify variables that could be confounders if they are not balanced between treatment groups.</p>
-<pre class="r"><code>library(DiagrammeR)</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;ggplot2&#39;:
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang</code></pre>
-<pre class="r"><code>mermaid(&quot;graph LR
+<pre class="r"><code>library(DiagrammeR)
+mermaid(&quot;graph LR
         T(Treatment)--&gt;U(Cure)
         A(Age)--&gt;T
         P(Parity)--&gt;T
@@ -1462,8 +1447,8 @@ style A fill:#FFFFFF, stroke-width:0px
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-8154ecab1d7d0b3ab97e" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8154ecab1d7d0b3ab97e">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Cure)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        K(DIM at post calving sample) --> T\n        D-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-854d6b586f0b295d50d7" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-854d6b586f0b295d50d7">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Cure)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        K(DIM at post calving sample) --> T\n        D-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”] or Age [“Age”] &lt;- likely to correlated</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
 <p>Somatic cell count during previous lactation [“SCCDO” and “PeakSCC”]</p>
@@ -2350,8 +2335,8 @@ style A fill:#FFFFFF, stroke-width:0px
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<div id="htmlwidget-ef809ba8a431f6bd98f2" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ef809ba8a431f6bd98f2">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(IMI at calving)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> M\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-bbaec4ea4ccdd7e077e7" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-bbaec4ea4ccdd7e077e7">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(IMI at calving)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> M\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script>
 <p>According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”] or Age [“Age”] &lt;- will use Parity</p>
 <p>Yield at most recent test before dry off [“MYDO”]</p>
@@ -3257,8 +3242,8 @@ style A fill:#FFFFFF, stroke-width:0px
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-46327b6dd4a994ec884a" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-46327b6dd4a994ec884a">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(New IMI)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->M        \n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-60c1ed9a2437209263f3" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-60c1ed9a2437209263f3">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(New IMI)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->M        \n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”] or Age [“Age”] &lt;- will use Parity</p>
 <p>Yield at most recent test before dry off [“MYDO”]</p>
 <p>Somatic cell count during previous lactation [“SCCDO” and “PeakSCC”]</p>

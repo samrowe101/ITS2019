@@ -1,1 +1,0 @@
-Analysis Logs for 2019 Internal Teat Sealant Trial

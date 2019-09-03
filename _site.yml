@@ -4,6 +4,4 @@ navbar:
   left:
     - text: "Dry period IMI dynamics"
       href: index.html
-    - text: "Post-calving outcomes"
-      href: CowAnalysis.html
 output_dir: "docs"

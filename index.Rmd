@@ -7,8 +7,7 @@ output:
   html_document:
     df_print: paged
     toc: true
-  html_notebook:
-    toc: yes
+
     
 ---
 
@@ -46,7 +45,7 @@ library(dplyr)
 lockqtr = lockqtr %>%
   mutate(Tx = recode(lockqtr$Tx,
                      "0" = "Orbeseal", "1" = "Lockout"))
-Desc1 <- lockqtr %>% select(FARMID,Cow,QTR,Tx,Age,Parity,IMIDO,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,PCSampDIM,IMIPC,Cure,NewIMI)
+Desc1 <- lockqtr %>% subset(select=c(FARMID,Cow,QTR,Tx,Age,Parity,IMIDO,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,PCSampDIM,IMIPC,Cure,NewIMI))
 head(Desc1, n=10) %>% kable()
 ```
 

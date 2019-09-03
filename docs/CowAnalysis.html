@@ -12,7 +12,7 @@
 <meta name="author" content="Sam Rowe (samrowe101@gmail.com)" />
 
 
-<title>Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Cow-level outcomes</title>
+<title>Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Impact on Cow-Level Post Calving Outcomes</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -298,9 +298,6 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Dry period IMI dynamics</a>
 </li>
-<li>
-  <a href="CowAnalysis.html">Post-calving outcomes</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -313,7 +310,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Cow-level outcomes</h1>
+<h1 class="title toc-ignore">Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Impact on Cow-Level Post Calving Outcomes</h1>
 <h4 class="author">Sam Rowe (<a href="mailto:samrowe101@gmail.com" class="email">samrowe101@gmail.com</a>)</h4>
 <h4 class="date">September 1st, 2019</h4>
 
@@ -424,7 +421,7 @@ lockcowdhi = lockcowdhi %&gt;%
 <h1>Evaluate Data</h1>
 <div id="show-first-10-rows-of-baseline" class="section level2">
 <h2>Show first 10 rows of baseline</h2>
-<pre class="r"><code>Desc1 &lt;- lockcow %&gt;% select(Cow,FARMID,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,CM2,Rem2)
+<pre class="r"><code>Desc1 &lt;- lockcow %&gt;% subset(select=c(Cow,FARMID,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,CM2,Rem2))
 head(Desc1, n=10)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
@@ -1177,8 +1174,8 @@ mermaid(&quot;graph LR
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-0d7cfea0bde526d8a7a6" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0d7cfea0bde526d8a7a6">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Clinical mastitis)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-9b4126ce19c9beadba3e" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9b4126ce19c9beadba3e">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Clinical mastitis)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”]</p>
 <p>Age [“Age”]</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
@@ -1587,8 +1584,8 @@ mermaid(&quot;graph LR
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-9f02737998bc537d8ffb" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9f02737998bc537d8ffb">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Culling or death)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-38967425683e4d6de336" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-38967425683e4d6de336">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Culling or death)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”]</p>
 <p>Age [“Age”]</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
@@ -1830,7 +1827,7 @@ head(DHIcheck, n=10)</code></pre>
 <div id="inspect-data-1" class="section level1">
 <h1>Inspect data</h1>
 <pre class="r"><code>lockcowdhi &lt;- lockcowdhi[!is.na(lockcowdhi$Tx),]
-DHIoutcome &lt;- lockcowdhi %&gt;% select(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC)
+DHIoutcome &lt;- lockcowdhi %&gt;% subset(select=c(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC))
 print(summarytools::dfSummary(DHIoutcome,valid.col=FALSE, graph.magnif=0.8, style=&quot;grid&quot;))</code></pre>
 <pre><code>## Data Frame Summary  
 ##   
@@ -1980,8 +1977,8 @@ mermaid(&quot;graph LR
         style D fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-38d2d691553fbe4cdda4" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-38d2d691553fbe4cdda4">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(SCC)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
+<p><div id="htmlwidget-85df772a52fb9d971370" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-85df772a52fb9d971370">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(SCC)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
 <p>Parity [“Parity”] &lt;- Age not offered as correlated (will confirm)</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
 <p>Somatic cell count during previous lactation [“DOSCC” and “PeakSCC”]</p>
@@ -2356,8 +2353,8 @@ mermaid(&quot;graph LR
         style D fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-adfdfcda8d946e1dc247" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-adfdfcda8d946e1dc247">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Milk yield)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
+<p><div id="htmlwidget-a4d01446b8a7fb719f9d" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a4d01446b8a7fb719f9d">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Milk yield)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
 <p>Parity [“Parity”] &lt;- Age not offered as correlated</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
 <p>Somatic cell count during previous lactation [“DOSCC” and “PeakSCC”]</p>
