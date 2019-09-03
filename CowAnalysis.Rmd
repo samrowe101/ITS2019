@@ -10,6 +10,11 @@ output:
 
 ---
 
+# NOTE TO READER
+
+<br>
+Download datasets for [Clinical mastitis and Culling](https://www.google.com) and [SCC and Milk yield](https://www.google.com) outcome
+
 <br>
 <br>
 <br>
@@ -32,6 +37,8 @@ setwd("C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT")
 #setwd("~/Dropbox/R backup/Lockout - R/LOCKOUT")
 load(file="lockcowdat.Rdata")
 load(file="lockcowdhidat.Rdata")
+#write.csv(lockcow,'ITS2019CMCULLDB.csv')
+#write.csv(lockcowdhi,'ITS2019SCCMYDB.csv')
 
 ```
 
