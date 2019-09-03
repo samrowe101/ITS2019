@@ -840,7 +840,8 @@ ggcoxzph(SR,var = c("TxLockout"))
 Dataset example
 ```{r}
 DHIcheck <- lockcowdhi %>% select(Tx,Cow,FARMID,TestDIMcat20,SCC,MY,Parity,CM1,MYDO,SCCDO)
-head(DHIcheck, n=10)
+lockcowdhi <- lockcowdhi[!is.na(lockcowdhi$Tx),]
+head(lockcowdhi, n=10)
 ```
 <br>
 <br>
@@ -849,9 +850,8 @@ head(DHIcheck, n=10)
 
 # Inspect data
 ```{r}
-lockcowdhi <- lockcowdhi[!is.na(lockcowdhi$Tx),]
 DHIoutcome <- lockcowdhi %>% subset(select=c(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC))
-print(summarytools::dfSummary(lockcowdhi,valid.col=FALSE, graph.magnif=0.8, style="grid"))
+print(summarytools::dfSummary(lockcowdhi,valid.col=FALSE,graph.magnif=0.5,varnumbers=F, style="grid"))
 
 ```
 Very little missing data. Will do complete case analysis.
