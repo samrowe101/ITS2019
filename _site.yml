@@ -1,7 +1,9 @@
-name: "Selective Dry Cow Therapy Analysis"
+name: "2019 Internal Teat Sealant Trial"
 navbar:
-  title: "Selective Dry Cow Therapy Analysis"
+  title: "2019 Internal Tealant Trial"
   left:
-    - text: "Analysis log"
+    - text: "Dry period IMI dynamics"
       href: index.html
+    - text: "Post-calving outcomes"
+      href: CowAnalysis.html
 output_dir: "docs"

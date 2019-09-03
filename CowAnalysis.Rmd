@@ -1,0 +1,1492 @@
+---
+title: "Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Impact on Cow-Level Post Calving Outcomes"
+date: September 1st, 2019
+author: Sam Rowe (samrowe101@gmail.com)
+
+output:
+  html_document:
+    df_print: paged
+    toc: true
+  html_notebook:
+    toc: yes
+  
+---
+
+<br>
+<br>
+<br>
+
+```{css}
+pre code {
+ white-space: 
+}
+```
+
+```{r}
+library(knitr)
+```
+
+
+```{r setup}
+#Windows
+setwd("C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT")
+#Mac
+#setwd("~/Dropbox/R backup/Lockout - R/LOCKOUT")
+load(file="lockcowdat.Rdata")
+load(file="lockcowdhidat.Rdata")
+
+```
+
+
+
+
+
+```{r}
+
+library(dplyr)
+lockcow = lockcow %>%
+  mutate(Tx = recode(lockcow$Tx,
+                     "0" = "Orbeseal", "1" = "Lockout"))
+
+lockcowdhi = lockcowdhi %>%
+  mutate(Tx = recode(lockcowdhi$Tx,
+                     "0" = "Orbeseal", "1" = "Lockout"))
+
+
+```
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+
+# Evaluate Data
+## Show first 10 rows of baseline
+```{r}
+Desc1 <- lockcow %>% select(Cow,FARMID,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,CM2,Rem2)
+head(Desc1, n=10)
+```
+
+<br>
+<br>
+
+## Inspect Data 
+
+```{r message=FALSE}
+#summarytools::dfSummary(Baseline, style='grid')
+print(summarytools::dfSummary(Desc1,valid.col=FALSE, graph.magnif=0.8, style="grid"))
+```
+<br>
+<br>
+
+## Compare treatment groups
+```{r}
+
+table1::table1(~ factor(FARMID) + Age + Parity + SCCDO + PeakSCC + MYDO + as.numeric(DIMDO) + CM1 + as.numeric(DPlength) + as.factor(CM2) + as.factor(Rem2) | Tx, data=lockcow,topclass="Rtable1-grid")
+```
+
+
+
+## Compare herds
+```{r}
+table1::table1(~ Age + Parity + SCCDO + PeakSCC + MYDO + as.numeric(DIMDO) + CM1 + as.numeric(DPlength) + as.factor(CM2) + as.factor(Rem2)  | factor(FARMID), data=lockcow,topclass="Rtable1-grid")
+```
+
+
+
+# Outcome 1: Clinical mastitis
+
+## 100 Clinical mastitis risk
+```{r}
+library(gmodels)
+CrossTable(lockcow$Tx,lockcow$CM2,prop.c=FALSE,prop.t=FALSE,prop.chisq = FALSE)
+```
+
+
+## Kaplan Meier curve & log rank test for clinical mastitis
+
+
+Kaplan Meier curve
+```{r}
+library(ggplot2)
+library(survminer)
+library(survival)
+KM <- survfit(Surv(CM2TAR, CM2) ~ Tx, data = lockcow)
+#knitr::opts_chunk$set(fig.width = 800, fig.height = 900)
+ggsurvplot(KM, data = lockcow,  title = "", pval = T, conf.int = F,risk.table.col = "Tx",risk.table = T, risk.table.y.text.col = TRUE , surv.plot.height = 5, legend.labs = c("Orbeseal","Lockout"), tables.theme = theme_cleantable(), ggtheme = theme_bw(base_family = "Times"), palette = "Set1")
+
+```
+
+
+## Log-Rank test
+```{r}
+survdiff(Surv(CM2TAR, CM2) ~ Tx,data=lockcow,rho=0)
+```
+
+
+## Cox proportional hazards regression for clinical mastitis (1-100 DIM)
+## Model building plan
+
+Model type: Cox proportional hazards analysis with farm included as a cluster variable (robust sandwich standard error estimator) to account for lack of indepedence. 
+
+Step 1: Identify potential confouders using a directed acyclic graph (DAG)
+
+Step 2: Identify correlated variables using pearson and kendalls correlation coefficients
+
+Step 3: Create model with all potential confounders
+
+Step 4: Investigate if covariates meet proportional hazards assumption
+
+Step 5: Investigate potential effect measure modification
+
+Step 6: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if hazard ratio for algorithm or culture changes by >10% after removing the covariate, the covariate is retained in the model)
+
+Step 7: Report final model
+
+### Step 1: DAG for clincal mastitis
+This is used to identify variables that could be confounders if they are not balanced between treatment groups. 
+```{r}
+library(DiagrammeR)
+mermaid("graph LR
+        T(Treatment)-->U(Clinical mastitis)
+        A(Age)-->T
+        P(Parity)-->T
+        M(Yield at dry-off)-->T
+        S(SCC during prev lactation)-->T
+        C(CM in prev lact)-->T
+        D(DIM at dry-off)--> T
+        P-->D
+        D-->M
+        D-->U
+        C-->D
+        A-->U
+        P-->U
+        M-->U
+        S-->U
+        C-->U
+        C-->M
+        P-->C
+        P-->S
+        P-->M
+        A-->P
+        A-->C
+        A-->S
+        A-->M
+        M-->S
+        C-->S
+        style A fill:#FFFFFF, stroke-width:0px
+        style D fill:#FFFFFF, stroke-width:0px
+        style T fill:#FFFFFF, stroke-width:2px
+        style P fill:#FFFFFF, stroke-width:0px
+        style M fill:#FFFFFF, stroke-width:0px
+        style S fill:#FFFFFF, stroke-width:0px
+        style C fill:#FFFFFF, stroke-width:0px
+        style I fill:#FFFFFF, stroke-width:0px
+        style U fill:#FFFFFF, stroke-width:2px
+        ")
+```
+According to this DAG, I may need to control for the following variables.
+
+Parity ["Parity"]
+
+Age ["Age"]
+
+Yield at most recent test before dry off ["DOMY"]
+
+Somatic cell count at last herd test during previous lactation ["DOSCC" or "PeakSCC"]
+
+Clinical mastitis in previous lactation ["CM2"]
+
+Days in milk at dry-off ["DODIM"]
+
+<br>
+<br>
+<br>
+<br>
+
+### Step 2: Identify correlated covariates
+Pearson correlation matrix among potential predictors
+```{r}
+library(psych)
+cor <- Desc1[, c(4,5,6,7,8,10,11)]
+cor$Parity <- cor$Parity %>% as.numeric
+cor <- cor(cor, use = "complete.obs")
+corPlot(cor,numbers=TRUE)
+```
+
+```{r}
+cor <- Desc1[, c(4,5,6,7,8,10,11)]
+cor$Parity <- cor$Parity %>% as.numeric
+cor <- cor(cor, use = "complete.obs", method="kendal")
+corPlot(cor,numbers=TRUE)
+```
+
+Age and Parity highly correlated as expected.  Will only offer parity. 
+
+<br>
+<br>
+<br>
+<br>
+
+
+### Step 3: Create model with all potential covariates
+Cox proportional hazards regression for clinical mastitis (1-100 DIM)
+
+Cows that did not calve or that had long/short dry periods are excluded. 
+Cows with clinical mastitis prior to calving are included. 
+
+Reasons for R censor = 100 DIM or culling/death
+
+```{r}
+library(broom)
+library(survival)
+SR <- coxph(Surv(CM2TAR, CM2) ~ Parity + DIMDO + MYDO + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow)
+coxph(Surv(CM2TAR, CM2) ~ Parity + DIMDO + MYDO + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow) %>% tidy(exp=TRUE)
+```
+
+### Step 4: Schoenfield tests to assess assumption of proportional hazards for explanatory variables.
+
+All variables are P > 0.05 for the schoenfeld test. 
+```{r}
+SR <- cox.zph(SR)
+SR
+```
+
+<br>
+<br>
+<br>
+<br>
+
+Schoenfield residual plots to assess assumption of proportional hazards. 
+```{r fig.height=8}
+ggcoxzph(SR,var = c("TxLockout"))
+```
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("DIMDO","MYDO"))
+```
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("SCCDO","PeakSCC"))
+```
+
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("Parity2","Parity3","Parity4"))
+```
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("CM11"))
+```
+
+No evidence of time-varying effects on CM hazards for all predictors. 
+
+<br>
+<br>
+<br>
+
+### Step 5: Investigate effect measure modification
+
+Step 5a: Treatment x Farm interaction (farmid modelled as fixed effect to explore this)
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + MYDO + DIMDO + SCCDO + CM1 + PeakSCC + Tx*factor(FARMID), data=lockcow)
+mm0 %>% tidy(exp=TRUE)
+mm0
+
+
+```
+<br>
+<br>
+<br>
+<br>
+
+Wald test
+```{r}
+library(aod)
+wald.test(b = coef(mm0), Sigma = vcov(mm0), Terms = 14:17)
+```
+Wald test for interaction is p > 0.05. No treatment by herd interaction.
+
+<br>
+<br>
+<br>
+
+Step 5b: Treatment x Previous clinical mastitis
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + DIMDO + MYDO + SCCDO + PeakSCC + Tx*CM1 + cluster(FARMID), data=lockcow)
+mm0 %>% tidy
+```
+p > 0.05. Will not explore this potential effect modification further
+<br>
+<br>
+<br>
+<br>
+
+Step 5c: Treatment x Parity at dry-off
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ DIMDO + SCCDO + PeakSCC + Tx*Parity + MYDO + CM1 + cluster(FARMID), data=lockcow)
+mm0 %>% tidy
+```
+
+Wald test
+```{r}
+library(aod)
+wald.test(b = coef(mm0), Sigma = vcov(mm0), Terms = 10:12)
+```
+P < 0.05, will explore this potential effect modification further later
+
+
+### Step 6: Remove unnecessary covariates (backwards selection using 10% rule)
+
+The order for removing covariates will be in increasing likelihood of being a confounder, which is based on my knowledge about the variables and their distribution in treatment groups.
+
+This order will be: DOMY, DIMDO, PeakSCC, DOSCC, Parity, CM1
+
+Step 6a: Full model
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + DIMDO + MYDO + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Step 6b: Remove DOMY
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + DIMDO + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%
+
+<br>
+<br>
+
+Step 6c: Remove DIMDO
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%
+
+<br>
+<br>
+
+Step 6d: Remove PeakSCC
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + SCCDO + CM1 + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%
+
+<br>
+<br>
+
+Step 6e: Remove DOSCC
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Parity + CM1 + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%
+
+<br>
+<br>
+
+Step 6e: Remove Parity
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ CM1 + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%
+
+
+<br>
+<br>
+
+Step 6e: Remove CM1
+```{r}
+mm0 <- coxph(Surv(CM2TAR, CM2) ~ Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%
+
+<br>
+<br>
+<br>
+
+#### Revisit potential effect modification by parity when only included in model with Treatment
+
+```{r}
+CoxCM <- coxph(Surv(CM2TAR, CM2) ~ Tx*Parity + cluster(FARMID), data=lockcow)
+wald.test(b = coef(CoxCM), Sigma = vcov(CoxCM), Terms = 5:7)
+```
+P < 0.05. 
+
+Will stratify analysis
+
+```{r}
+library(emmeans)
+CoxCM <- coxph(Surv(CM2TAR, CM2) ~ Tx*Parity + cluster(FARMID), data=lockcow)
+emmeans(CoxCM,pairwise ~ Tx | Parity, type = "response")
+```
+Note that ratios are inverted. These findings indicate that the hazard ratio within parity=3 cows is different to the others. All stratified effect estimates (HR) have wide confidence intervals that greatly overlap one-another. Also, there appears to be little biologic explanation for why parity 3 cows behave differently to the others. This may be a spurious finding. 
+
+Decision: Report main effects. 
+
+
+### Step 7a: Reporting final cox model for clinical mastitis (1-100 DIM)
+No covariates included, as no evidence for confounding.
+```{r}
+CoxCM <- coxph(Surv(CM2TAR, CM2) ~ Tx + cluster(FARMID), data=lockcow)
+CoxCM %>% tidy(exp=T)
+```
+
+
+#### Checking Schoenfield residuals for Tx in final model
+```{r fig.height=8}
+cox.zph(CoxCM)
+SR <- cox.zph(CoxCM)
+ggcoxzph(SR,var = c("TxLockout"))
+```
+
+
+# Outcome 2: Culling or death
+
+## 100 d Culling or death risk
+```{r}
+CrossTable(lockcow$Tx,lockcow$Rem2,prop.c=FALSE,prop.t=FALSE,prop.chisq = FALSE)
+```
+
+## Kaplan Meier curve & log rank test for culling or death
+
+Kaplan Meier curve
+```{r fig.height=8}
+library(ggplot2)
+library(survminer)
+KM <- survfit(Surv(Rem2TAR, Rem2) ~ Tx, data = lockcow)
+
+#knitr::opts_chunk$set(fig.width = 800, fig.height = 900)
+ggsurvplot(KM, data = lockcow,  title = "", pval = T, conf.int = F,risk.table.col = "Tx",risk.table = T, risk.table.y.text.col = TRUE , surv.plot.height = 5, legend.labs = c("Orbeseal","Lockout"), tables.theme = theme_cleantable(), ggtheme = theme_bw(base_family = "Times"), palette = "Set1")
+
+```
+
+
+## Log-Rank test
+```{r}
+survdiff(Surv(Rem2TAR, Rem2) ~ Tx,data=lockcow,rho=0)
+```
+
+
+## Cox proportional hazards regression for culling or death (1-100 DIM)
+## Model building plan
+
+Model type: Cox proportional hazards analysis with farm included as a cluster variable (robust sandwich standard error estimator) to account for lack of indepedence. 
+
+Step 1: Identify potential confouders using a directed acyclic graph (DAG)
+
+Step 2: Identify correlated variables using pearson and kendalls correlation coefficients
+
+Step 3: Create model with all potential confounders
+
+Step 4: Investigate if covariates meet proportional hazards assumption
+
+Step 5: Investigate potential effect measure modification
+
+Step 6: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if hazard ratio for algorithm or culture changes by >10% after removing the covariate, the covariate is retained in the model)
+
+Step 7: Report final model
+
+### Step 1: DAG for culling or death
+This is used to identify variables that could be confounders if they are not balanced between treatment groups. 
+```{r fig.width = 10}
+library(DiagrammeR)
+mermaid("graph LR
+        T(Treatment)-->U(Culling or death)
+        A(Age)-->T
+        P(Parity)-->T
+        M(Yield at dry-off)-->T
+        S(SCC during prev lactation)-->T
+        C(CM in prev lact)-->T
+        D(DIM at dry-off)--> T
+        P-->D
+        D-->M
+        D-->U
+        C-->D
+        A-->U
+        P-->U
+        M-->U
+        S-->U
+        C-->U
+        C-->M
+        P-->C
+        P-->S
+        P-->M
+        A-->P
+        A-->C
+        A-->S
+        A-->M
+        M-->S
+        C-->S
+        style A fill:#FFFFFF, stroke-width:0px
+        style D fill:#FFFFFF, stroke-width:0px
+        style T fill:#FFFFFF, stroke-width:2px
+        style P fill:#FFFFFF, stroke-width:0px
+        style M fill:#FFFFFF, stroke-width:0px
+        style S fill:#FFFFFF, stroke-width:0px
+        style C fill:#FFFFFF, stroke-width:0px
+        style I fill:#FFFFFF, stroke-width:0px
+        style U fill:#FFFFFF, stroke-width:2px
+        ")
+```
+According to this DAG, I may need to control for the following variables.
+
+Parity ["Parity"]
+
+Age ["Age"]
+
+Yield at most recent test before dry off ["DOMY"]
+
+Somatic cell count at last herd test during previous lactation ["DOSCC" and "PeakSCC"]
+
+Clinical mastitis in previous lactation ["CM2"]
+
+DIM at dry-off ["DODIM"]
+
+<br>
+<br>
+<br>
+<br>
+
+### Step 2: Identify correlated covariates
+Age and Parity highly correlated as shown earlier.  Will only offer parity. 
+
+<br>
+<br>
+<br>
+<br>
+
+
+### Step 3: Create model with all potential covariates
+Cox proportional hazards regression for culling or death (1-100 DIM)
+
+Cows that did not calve or that had long/short dry periods are excluded. 
+
+Reasons for R censor = 100 DIM
+
+```{r}
+library(broom)
+library(survival)
+SR <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + DIMDO + MYDO + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow)
+SR %>% tidy(exp=TRUE)
+```
+
+### Step 4: Schoenfield tests to assess assumption of proportional hazards for explanatory variables.
+
+All variables are P > 0.05 for the schoenfeld test. 
+```{r}
+SR <- cox.zph(SR)
+SR
+```
+
+<br>
+<br>
+<br>
+<br>
+
+Schoenfield residual plots to assess assumption of proportional hazards. 
+```{r fig.height=8}
+ggcoxzph(SR,var = c("TxLockout"))
+```
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("DIMDO","MYDO"))
+```
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("SCCDO","PeakSCC"))
+```
+
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("Parity2","Parity3","Parity4"))
+```
+
+```{r fig.height=8}
+ggcoxzph(SR,var = c("CM11"))
+```
+
+No evidence of time-varying effects on CM hazards for all predictors. 
+
+<br>
+<br>
+<br>
+
+### Step 5: Investigate effect measure modification
+
+Step 5a: Treatment x Farm interaction (farmid modelled as fixed effect to explore this)
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + MYDO + DIMDO + SCCDO + CM1 + PeakSCC + Tx*factor(FARMID), data=lockcow)
+mm0 %>% tidy(exp=TRUE)
+mm0
+
+
+```
+<br>
+<br>
+<br>
+<br>
+
+Wald test
+```{r}
+library(aod)
+wald.test(b = coef(mm0), Sigma = vcov(mm0), Terms = 14:17)
+```
+Wald test for interaction is p > 0.05. No treatment by herd interaction.
+
+<br>
+<br>
+<br>
+
+Step 5b: Treatment x milk yield at dry-off
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + DIMDO + SCCDO + PeakSCC + Tx*MYDO + CM1 + cluster(FARMID), data=lockcow)
+mm0 %>% tidy
+```
+p > 0.05. Will not explore this effect modification further
+<br>
+<br>
+<br>
+<br>
+
+Step 5c: Treatment x Parity at dry-off
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ DIMDO + SCCDO + PeakSCC + Tx*factor(Parity) + MYDO + CM1 + cluster(FARMID), data=lockcow)
+mm0 %>% tidy
+```
+
+Wald test
+```{r}
+library(aod)
+wald.test(b = coef(mm0), Sigma = vcov(mm0), Terms = 10:12)
+```
+P > 0.05, will not explore this potential effect modification further
+
+
+### Step 6: Remove unnecessary covariates (backwards selection using 10% rule)
+
+The order for removing covariates will be in increasing likelihood of being a confounder, which is based on my knowledge about the variables and their distribution in treatment groups.
+
+This order will be:  PeakSCC, DOSCC, CM1, DIMDO, DOMY, Parity
+
+Step 6a: Full model
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + DIMDO + MYDO + SCCDO + CM1 + PeakSCC + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Changed by < 10%. Stays out
+
+<br>
+<br>
+<br>
+
+Step 6b: Removed PeakSCC
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + DIMDO + MYDO + SCCDO + CM1 + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by < 10%. Stays out
+
+<br>
+<br>
+<br>
+
+Step 6c: Removed DOSCC
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + DIMDO + MYDO + CM1 + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Changed by < 10%. Stays out
+<br>
+<br>
+<br>
+
+Step 6d: Removed CM1
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + DIMDO + MYDO + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Changed by < 10%. Stays out
+<br>
+<br>
+<br>
+
+Step 6e: Removed DIMDO
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + MYDO + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Changed by < 10%. Stays out
+<br>
+<br>
+<br>
+
+Step 6f: Removed DOMY
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Parity + Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Changed by < 10%. Stays out
+<br>
+<br>
+<br>
+
+Step 6f: Removed Parity
+```{r}
+mm0 <- coxph(Surv(Rem2TAR, Rem2) ~ Tx + cluster(FARMID), data=lockcow)
+mm0 %>% tidy(exp=T) %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+
+Changed by < 10%. Stays out
+
+<br>
+<br>
+<br>
+
+### Step 7a: Reporting final cox model for culling or death (1-100 DIM)
+No covariates included, as no evidence for confounding.
+```{r}
+CoxRem <- coxph(Surv(Rem2TAR, Rem2) ~ Tx + cluster(FARMID), data=lockcow)
+CoxRem %>% tidy(exp=T)
+```
+
+
+#### Checking Schoenfield residuals for Tx in final model
+```{r fig.height=8}
+cox.zph(CoxRem)
+SR <- cox.zph(CoxRem)
+ggcoxzph(SR,var = c("TxLockout"))
+```
+
+
+
+
+# Changing datasets: DHI dataset with multiple rows per cow
+
+Dataset example
+```{r}
+DHIcheck <- lockcowdhi %>% select(Tx,Cow,FARMID,TestDIMcat20,SCC,MY,Parity,CM1,MYDO,SCCDO)
+head(DHIcheck, n=10)
+```
+<br>
+<br>
+<br>
+<br>
+
+# Inspect data
+```{r}
+lockcowdhi <- lockcowdhi[!is.na(lockcowdhi$Tx),]
+DHIoutcome <- lockcowdhi %>% select(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC)
+print(summarytools::dfSummary(DHIoutcome,valid.col=FALSE, graph.magnif=0.8, style="grid"))
+
+```
+Very little missing data. Will do complete case analysis.
+<br>
+<br>
+<br>
+<br>
+
+## Assessing normality for continuous outcome variables
+
+Somatic cell count (log x 10,000 cells)
+```{r}
+library(qualityTools)
+qualityTools::qqPlot(lockcowdhi$SCC)
+```
+
+```{r}
+hist(log(lockcowdhi$SCC+1))
+```
+<br>
+<br>
+<br>
+<br>
+
+Milk yield (kg)
+```{r}
+qqPlot(lockcowdhi$MY)
+```
+```{r}
+hist(lockcowdhi$MY)
+```
+<br>
+<br>
+<br>
+<br>
+
+# Outcome 3: Somatic cell count
+
+## Modelling plan
+Model type: Linear mixed models, random intercepts for farm and cow will be fitted to account for repeated measures within cows, and clustering of cows within herds
+
+Step 1: Identify potential confouders using a directed acyclic graph (DAG)
+
+Step 2: Identify correlated variables using pearson and kendalls correlation coefficients
+
+Step 3: Create model with all potential confounders
+
+Step 4: Investigate potential effect measure modification
+
+Step 5: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if estimated difference in SCC changes by >10% after removing the covariate, the covariate is retained in the model)
+
+Step 6: Report final model
+
+Step 7: Model diagnostics
+
+### Step 1 Identify potential confounders using a DAG
+```{r fig.width=10}
+library(DiagrammeR)
+mermaid("graph LR
+        T(Treatment)-->U(SCC)
+        A(Age)-->T
+        P(Parity)-->T
+        M(Yield at dry-off)-->T
+        S(SCC during prev lactation)-->T
+        C(CM in prev lact)-->T
+        D(Days in milk at test)-->U
+        K(Days in milk at dry off) --> M
+        C-->K
+        K-->T
+        D-->T
+        A-->U
+        P-->U
+        M-->U
+        S-->U
+        C-->U
+        C-->M
+        P-->C
+        P-->S
+        P-->M
+        A-->P
+        A-->C
+        A-->S
+        A-->M
+        M-->S
+        C-->S
+        style K fill:#FFFFFF, stroke-width:0px
+        style A fill:#FFFFFF, stroke-width:0px
+        style T fill:#FFFFFF, stroke-width:2px
+        style P fill:#FFFFFF, stroke-width:0px
+        style M fill:#FFFFFF, stroke-width:0px
+        style S fill:#FFFFFF, stroke-width:0px
+        style C fill:#FFFFFF, stroke-width:0px
+        style I fill:#FFFFFF, stroke-width:0px
+        style D fill:#FFFFFF, stroke-width:0px
+        style U fill:#FFFFFF, stroke-width:2px
+        ")
+```
+According to this DAG, I may need to control for the following variables:
+
+Parity ["Parity"] <- Age not offered as correlated (will confirm)
+
+Yield at most recent test before dry off ["DOMY"]
+
+Somatic cell count during previous lactation ["DOSCC" and "PeakSCC"]
+
+Days in milk at dry-off ["DIMDO"]
+
+Clinical mastitis in previous lactation ["PrevCM"]
+
+Days in milk at herd test (category, 0-20 "10", 21-40 "30" etc) ["TestDIMcat20"]
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+### Step 2: Identify correlated covariates
+Pearson correlation matrix among potential predictors
+```{r}
+cor <- DHIoutcome[, c(4,5,6,7,8,10,11,12,13)]
+cor$Parity <- cor$Parity %>% as.numeric
+cor <- cor(cor, use = "complete.obs")
+corPlot(cor,numbers=TRUE)
+```
+
+```{r}
+cor <- DHIoutcome[, c(4,5,6,7,8,10,11,12,13)]
+cor$Parity <- cor$Parity %>% as.numeric
+cor <- cor(cor, use = "complete.obs", method="kendal")
+corPlot(cor,numbers=TRUE)
+```
+
+Age and Parity highly correlated as expected.  Will only offer parity. 
+
+<br>
+<br>
+<br>
+<br>
+
+### Step 3: Create model with all potential confounders
+```{r}
+library(lme4)
+mm0 <- lmer(SCC ~ Tx + TestDIMcat20 + Parity + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy
+```
+<br>
+<br>
+<br>
+<br>
+
+### Step 4: Investigate effect measure modification
+
+Will investigate with Farm, TestDIMCat and Parity
+
+Tx:FARMID
+```{r}
+mm0 <- lmer(SCC ~ Tx*FARMID + TestDIMcat20 + Parity + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|Cow), data=lockcowdhi)
+car::Anova(mm0) %>% tidy
+```
+P > 0.05. Will not investigate this further. 
+
+<br>
+<br>
+<br>
+
+Tx:TestDIMCat
+```{r}
+mm0 <- lmer(SCC ~ Tx*TestDIMcat20 + Parity + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+car::Anova(mm0) %>% tidy
+```
+P > 0.05. Will not investigate this further. 
+
+<br>
+<br>
+<br>
+
+Tx:Parity
+```{r}
+mm0 <- lmer(SCC ~ Tx*factor(Parity) + TestDIMcat20 + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+car::Anova(mm0) %>% tidy
+```
+P > 0.05. Will not investigate this further. 
+
+
+### Step 5: Remove unneccesary covariates in backwards stepwise fashion using 10% rule
+
+The order for removing covariates will be in increasing likelihood of being a confounder, which is based on my knowledge about the variables and their distribution in treatment groups.
+
+This order will be: DIMDO, DOMY, Parity, CM1, DOSCC, PeakSCC
+
+TestDIMcat20 will not be removed.
+
+Step 5a: Full model
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+
+<br>
+<br>
+<br>
+
+Step 5b: Removed DIMDO
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + MYDO + CM1 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy() %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%. Stays out. 
+
+<br>
+<br>
+<br>
+
+Step 5b: Removed MYDO
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + CM1 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy() %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%. Stays out. 
+
+<br>
+<br>
+<br>
+
+Step 5c: Removed Parity
+```{r}
+mm0 <- lmer(SCC ~ Tx + TestDIMcat20 + SCCDO + PeakSCC + CM1 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy() %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by >10%. Stays in.
+
+<br>
+<br>
+<br>
+
+Step 5d: Removed CM1
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy() %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by >10%. Stays in. 
+
+<br>
+<br>
+<br>
+
+Step 5e: Removed SCCDO
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 +  PeakSCC + CM1 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy() %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by <10%. Stays out
+
+<br>
+<br>
+<br>
+
+Step 5e: Removed PeakSCC
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + CM1 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy() %>% subset(term=="TxLockout",select=c(term,estimate))
+```
+Changed by >10%. Stays in. 
+
+<br>
+<br>
+<br>
+
+### Step 6a: Final model
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + CM1 + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% summary
+mm0 %>% tidy(conf.int=T)
+```
+
+#### ICC for SCC (1 - 100 DIM)
+```{r}
+mm0 <- lmer(SCC ~ 1 + (1|FARMID/Cow), data=lockcowdhi)
+summary(mm0)
+```
+
+ICC (CowID) = 0.38
+ICC (FARMID) = 0.0
+
+Most clustering is happening within cow, which is not a suprise given this is longitudinal data. 
+
+### Step 6b: Final model reported as estimated marginal means (~LSmeans)
+Mean logSCC
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + CM1 + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+emm <- emmeans(mm0, ~Tx) %>% tidy()
+emm
+```
+
+
+### Step 6c: Final model reported as back-transformed estimated marginal means (~LSmeans)
+Geometric mean SCC
+```{r}
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + CM1 + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+emm <- emmeans(mm0, ~Tx) %>% tidy()
+emm$SCC <- exp(emm$estimate) 
+emm$LCL <- exp(emm$conf.low)
+emm$UCL <- exp(emm$conf.high)
+#emm$estimate <- NULL
+#emm$std.error <- NULL
+#emm$conf.low <- NULL
+#emm$conf.high <- NULL
+#emm$df <- NULL
+emm <- emm %>% subset(select=c(Tx,SCC,LCL,UCL))
+emm
+```
+<br>
+<br>
+<br>
+
+
+Reported as back-transformed estimated marginal means by herd test day, no interaction with test DIM
+```{r}
+windowsFonts(Times=windowsFont("Times New Roman"))
+
+mm0 <- lmer(SCC ~ Tx + Parity + TestDIMcat20 + CM1 + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+atx <- table(lockcowdhi$TestDIMcat20)
+emm <- emmeans(mm0, ~Tx*TestDIMcat20, at=list(atx)) %>% tidy()
+emm$SCC <- exp(emm$estimate)
+emm$LCL <- exp(emm$conf.low)
+emm$UCL <- exp(emm$conf.high)
+emm <- emm %>% subset(select=c(Tx,TestDIMcat20,SCC,LCL,UCL))
+
+curve <- ggplot(emm) + coord_cartesian(ylim = (c(0,130))) + aes(x=TestDIMcat20, y=SCC, group=Tx, colour=Tx) +
+  labs(y = "Somatic cell count \n(geometric mean x 1,000 cells/ml)", x = "Days in milk") + geom_point(size=3) + geom_ribbon(aes(ymin=emm$LCL, ymax=emm$UCL,colour=Tx,fill=Tx), linetype=0, alpha=0.1) + geom_line(aes(colour=Tx,linetype=Tx),size=1.1) + theme(panel.border = element_rect(colour = "black", fill=NA, size=1),axis.text=element_text(size=12,family="Times"),axis.title=element_text(size=14,face="bold",family="Times"),panel.background = element_rect(fill = "white", colour = "white",size = 0.5, linetype = "solid"),panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "grey"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "grey"),legend.position="bottom",legend.text = element_text(colour="black", size=12,face="bold",family="Times")) + scale_color_brewer(palette="Set1") 
+curve
+
+```
+<br>
+<br>
+<br>
+<br>
+
+Reported as back-transformed estimated marginal means by herd test day, with interaction with test DIM
+```{r}
+mm0 <- lmer(SCC ~ Tx*TestDIMcat20 +Parity + CM1 + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+atx <- c(10,30,50,70,90,110)
+emm <- emmeans(mm0, ~Tx*TestDIMcat20, at=list(atx)) %>% tidy()
+emm$SCC <- exp(emm$estimate)
+emm$LCL <- exp(emm$conf.low)
+emm$UCL <- exp(emm$conf.high)
+emm <- emm %>% subset(select=c(Tx,TestDIMcat20,SCC,LCL,UCL))
+
+curve <- ggplot(emm) + coord_cartesian(ylim = (c(0,130))) + aes(x=TestDIMcat20, y=SCC, group=Tx, colour=Tx) +
+  labs(y = "Somatic cell count \n(geometric mean x 1,000 cells/ml)", x = "Days in milk") + geom_point(size=3) + geom_ribbon(aes(ymin=emm$LCL, ymax=emm$UCL,colour=Tx,fill=Tx), linetype=0, alpha=0.1) + geom_line(aes(colour=Tx,linetype=Tx),size=1.1) + theme(panel.border = element_rect(colour = "black", fill=NA, size=1),axis.text=element_text(size=12,family="Times"),axis.title=element_text(size=14,face="bold",family="Times"),panel.background = element_rect(fill = "white", colour = "white",size = 0.5, linetype = "solid"),panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "grey"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "grey"),legend.position="bottom",legend.text = element_text(colour="black", size=12,face="bold",family="Times")) + scale_color_brewer(palette="Set1") 
+curve
+
+```
+
+<br>
+<br>
+<br>
+<br>
+
+### Step 7: Model diagnostics
+Checking homoskedasticity assumption (variance of residuals)
+```{r}
+mm0 <- lmer(SCC ~ Tx*TestDIMcat20 +Parity + CM1 + PeakSCC + (1|FARMID/Cow), data=lockcowdhi)
+ggplot(data.frame(eta=predict(mm0,type="link"),pearson=residuals(mm0,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+```
+
+<br>
+Variance appears to get slightly larger at higher values on the x-axis shown here. But most values are clustered closely in the middle. 
+
+Checking normality of residuals
+```{r}
+qqnorm(residuals(mm0))
+```
+
+<br>
+Evidence of small L tail. Although some evidence of heteroskedasticity and not perfectly normal residuals, I believe these are allowable for this model. 
+
+
+
+
+
+
+
+# Outcome 4: Milk yield (0-100 DIM)
+
+## Modelling plan
+Model type: Linear mixed models, random intercepts for farm and cow will be fitted to account for repeated measures within cows, and clustering of cows within herds
+
+Step 1: Identify potential confouders using a directed acyclic graph (DAG)
+
+Step 2: Identify correlated variables using pearson and kendalls correlation coefficients (already done)
+
+Step 3: Create model with all potential confounders
+
+Step 4: Investigate potential effect measure modification
+
+Step 5: Remove unneccesary covariates in backwards stepwise fashion using 10% rule (i.e. if estimated difference in SCC changes by >10% after removing the covariate, the covariate is retained in the model)
+
+Step 6: Report final model
+
+Step 7: Model diagnostics
+
+### Steps 1 and 2: Identify potential confounders using a DAG
+```{r fig.width=10}
+library(DiagrammeR)
+mermaid("graph LR
+        T(Treatment)-->U(Milk yield)
+        A(Age)-->T
+        P(Parity)-->T
+        M(Yield at dry-off)-->T
+        S(SCC during prev lactation)-->T
+        C(CM in prev lact)-->T
+        D(Days in milk at test)-->U
+        K(Days in milk at dry off) --> M
+        C-->K
+        K-->T
+        D-->T
+        A-->U
+        P-->U
+        M-->U
+        S-->U
+        C-->U
+        C-->M
+        P-->C
+        P-->S
+        P-->M
+        A-->P
+        A-->C
+        A-->S
+        A-->M
+        M-->S
+        C-->S
+        style K fill:#FFFFFF, stroke-width:0px
+        style A fill:#FFFFFF, stroke-width:0px
+        style T fill:#FFFFFF, stroke-width:2px
+        style P fill:#FFFFFF, stroke-width:0px
+        style M fill:#FFFFFF, stroke-width:0px
+        style S fill:#FFFFFF, stroke-width:0px
+        style C fill:#FFFFFF, stroke-width:0px
+        style I fill:#FFFFFF, stroke-width:0px
+        style D fill:#FFFFFF, stroke-width:0px
+        style U fill:#FFFFFF, stroke-width:2px
+        ")
+```
+According to this DAG, I may need to control for the following variables:
+
+Parity ["Parity"] <- Age not offered as correlated
+
+Yield at most recent test before dry off ["DOMY"]
+
+Somatic cell count during previous lactation ["DOSCC" and "PeakSCC"]
+
+Days in milk at dry-off ["DIMDO"]
+
+Clinical mastitis in previous lactation ["PrevCM"]
+
+Days in milk at herd test (category, 0-20 "10", 21-40 "30" etc) ["TestDIMcat20"]
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+### Step 3: Create model with all potential confounders
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + Parity + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy
+```
+<br>
+<br>
+<br>
+<br>
+
+### Step 4: Investigate effect measure modification
+
+Will investigate EMM with Farm, TestDIMCat and Parity
+
+Tx:FARMID
+```{r}
+mm0 <- lmer(MY ~ Tx*FARMID + TestDIMcat20 + Parity + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|Cow), data=lockcowdhi)
+car::Anova(mm0) %>% tidy
+```
+P > 0.05. Will not investigate this further. 
+
+<br>
+<br>
+<br>
+
+Tx:TestDIMCat
+```{r}
+mm0 <- lmer(MY ~ Tx*TestDIMcat20 + Parity + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+car::Anova(mm0) %>% tidy
+```
+P > 0.05. Will not investigate this further. 
+
+<br>
+<br>
+<br>
+
+Tx:Parity
+```{r}
+mm0 <- lmer(MY ~ Tx*Parity + TestDIMcat20 + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+car::Anova(mm0) %>% tidy
+```
+P > 0.05. Will not investigate this further. 
+
+<br>
+<br>
+<br>
+
+
+### Step 5: Remove unneccesary covariates in backwards stepwise fashion using 10% rule
+
+The order for removing covariates will be in increasing likelihood of being a confounder, which is based on my knowledge about the variables and their distribution in treatment groups.
+
+This order will be: DIMDO, CM1, DOSCC, PeakSCC, Parity, DOMY
+
+TestDIMcat20 will not be removed.
+
+Step 5a: Full model
+```{r}
+mm0 <- lmer(MY ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + MYDO + CM1 + DIMDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+
+<br>
+<br>
+<br>
+
+Step 5b: Remove DIMDO 
+
+```{r}
+mm0 <- lmer(MY ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + MYDO + CM1 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+Changed by <10%. Stays out.
+
+<br>
+<br>
+<br>
+
+Step 5c: Remove CM1
+
+```{r}
+mm0 <- lmer(MY ~ Tx + Parity + TestDIMcat20 + SCCDO + PeakSCC + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+Changed by <10%. Stays out.
+
+<br>
+<br>
+<br>
+
+Step 5d: Remove DOSCC
+
+```{r}
+mm0 <- lmer(MY ~ Tx + Parity + TestDIMcat20 + PeakSCC + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+
+Changed by <10%. Stays out.
+
+<br>
+<br>
+<br>
+
+Step 5e: Remove PeakSCC
+
+```{r}
+mm0 <- lmer(MY ~ Tx + Parity + TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+Changed by <10%. Stays out.
+
+<br>
+<br>
+<br>
+
+Step 5f: Remove Parity
+
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+
+Changed by <10%. Stays out.
+
+<br>
+<br>
+<br>
+
+Step 5g: Remove MYDO
+
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% tidy(conf.int=T) %>% subset(term=="TxLockout")
+```
+Changed by >10%, MYDO Stays in.
+
+### Step 6: Final model
+
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+mm0 %>% summary()
+mm0 %>% tidy(conf.int=T)
+```
+<br>
+<br>
+<br>
+
+#### ICC for Milk yield (1 - 100 DIM)
+```{r}
+mm0 <- lmer(MY ~ 1 + (1|FARMID/Cow), data=lockcowdhi)
+summary(mm0)
+```
+
+ICC (CowID) = 0.18
+ICC (FARMID) = 0.48
+
+A lot of clustering, particularly within farms, which is not suprising given that many milk yield determinants (eg diet) are allocated at the group level.
+
+### Step 6b: Final model (using 10% rule) reported as estimated marginal means (~LSmeans)
+Mean logSCC
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+emm <- emmeans(mm0, ~Tx) %>% tidy()
+emm
+```
+
+Very large confidence intervals, probably because of the huge amount of within herd clustering and between herd variability. 
+
+<br>
+<br>
+<br>
+
+
+Reported, stratified by TestDIMcat20
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+
+atx <- table(lockcowdhi$TestDIMcat20)
+emm <- emmeans(mm0, ~Tx*TestDIMcat20, at=list(atx)) %>% tidy()
+emm$MY <- emm$estimate
+emm <- emm %>% subset(select=c(Tx,TestDIMcat20,MY,conf.low,conf.high))
+
+curve <- ggplot(emm) + coord_cartesian(ylim = (c(0,60))) + aes(x=TestDIMcat20, y=MY, group=Tx, colour=Tx) + geom_point(size=3) + geom_ribbon(aes(ymin=emm$conf.low, ymax=emm$conf.high,colour=Tx,fill=Tx), linetype=0, alpha=0.1) + geom_line(aes(colour=Tx,linetype=Tx),size=1.1) + theme(panel.border = element_rect(colour = "black", fill=NA, size=1),legend.position="bottom",axis.text=element_text(size=12),axis.title=element_text(size=14,face="bold")) +
+  labs(y = "Average daily milk yield (kg)", x = "Days in milk") + theme(axis.text=element_text(size=12),axis.title=element_text(size=14,face="bold",family="Times"),panel.background = element_rect(fill = "white", colour = "white",size = 0.5, linetype = "solid"),panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "grey"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "grey"),legend.position="bottom",legend.text = element_text(family="Times", colour="black", size=12,face="bold")) + scale_color_brewer(palette="Set1")
+curve
+
+```
+<br>
+<br>
+<br>
+<br>
+
+Reported, stratified and modified by TestDIMcat20
+```{r}
+mm0 <- lmer(MY ~ Tx*TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+summary(mm0)
+atx <- table(lockcowdhi$TestDIMcat20)
+emm <- emmeans(mm0, ~Tx*TestDIMcat20, at=list(atx)) %>% tidy()
+emm$MY <- emm$estimate
+emm <- emm %>% subset(select=c(Tx,TestDIMcat20,MY,conf.low,conf.high))
+curve <- ggplot(emm) + coord_cartesian(ylim = (c(0,60))) + aes(x=TestDIMcat20, y=MY, group=Tx, colour=Tx) + geom_point(size=3) + geom_ribbon(aes(ymin=emm$conf.low, ymax=emm$conf.high,colour=Tx,fill=Tx), linetype=0, alpha=0.1) + geom_line(aes(colour=Tx,linetype=Tx),size=1.1) + theme(panel.border = element_rect(colour = "black", fill=NA, size=1),legend.position="bottom",axis.text=element_text(size=12),axis.title=element_text(size=14,face="bold")) +
+  labs(y = "Average daily milk yield (kg)", x = "Days in milk") + theme(axis.text=element_text(size=12),axis.title=element_text(size=14,face="bold",family="Times"),panel.background = element_rect(fill = "white", colour = "white",size = 0.5, linetype = "solid"),panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "grey"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid',colour = "grey"),legend.position="bottom",legend.text = element_text(family="Times", colour="black", size=12,face="bold")) + scale_color_brewer(palette="Set1")
+curve
+```
+
+
+### Step 7: Model diagnostics
+
+Checking homoskedasticity assumption (variance of residuals)
+```{r}
+mm0 <- lmer(MY ~ Tx + TestDIMcat20 + MYDO + (1|FARMID/Cow), data=lockcowdhi)
+ggplot(data.frame(eta=predict(mm0,type="link"),pearson=residuals(mm0,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+```
+
+<br>
+
+Vey little evidence of heteroskedasticity
+
+Checking normality of residuals
+```{r}
+qqnorm(residuals(mm0))
+```
+
+I am happy with homoskedasticity and normal residuals assumptions
+
+
+

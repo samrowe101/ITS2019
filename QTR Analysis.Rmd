@@ -1,5 +1,5 @@
 ---
-title: "Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: Impact on Quarter-Level Dry Period IMI Dynamics"
+title: "Randomized Equivalence Study Evaluating the Efficacy of Two Commercial Internal Teat Sealants in Dairy Cows: quarter-level outcomes"
 date: September 1st, 2019
 author: Sam Rowe (samrowe101@gmail.com)
 
@@ -24,16 +24,22 @@ pre code {
 ```
 
 ```{r setup}
-library(knitr)
 #Windows
-knitr::opts_knit$set(root.dir = "C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT")
-
+setwd("C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT")
 #Mac
-#knitr::opts_knit$set(root.dir = "~/Dropbox/R backup/Lockout - R/LOCKOUT")
+#setwd("~/Dropbox/R backup/Lockout - R/LOCKOUT")
+load(file="lockqtrdat.Rdata")
 
+library(dplyr)
+lockqtr = lockqtr %>%
+  mutate(Tx = recode(lockqtr$Tx,
+                     "0" = "Orbeseal", "1" = "Lockout"))
 ```
 
 
+```{r}
+library(knitr)
+```
 
 
 # Evaluate Data
@@ -41,13 +47,8 @@ knitr::opts_knit$set(root.dir = "C:/Users/rowe0122/Dropbox/R backup/Lockout - R/
 ## Show first 10 rows of baseline
 
 ```{r}
-load(file="lockqtrdat.Rdata")
-library(dplyr)
-lockqtr = lockqtr %>%
-  mutate(Tx = recode(lockqtr$Tx,
-                     "0" = "Orbeseal", "1" = "Lockout"))
 Desc1 <- lockqtr %>% select(FARMID,Cow,QTR,Tx,Age,Parity,IMIDO,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,PCSampDIM,IMIPC,Cure,NewIMI)
-head(Desc1, n=10) %>% kable()
+head(Desc1, n=10)
 ```
 
 <br>
@@ -56,12 +57,7 @@ head(Desc1, n=10) %>% kable()
 ## Inspect Data 
 
 ```{r}
-library(summarytools)
-
-#opts_chunk$set(comment = NA, prompt = FALSE, cache = FALSE, results = 'asis')
-print(summarytools::dfSummary(Desc1, valid.col=FALSE,graph.magnif=0.5,varnumbers=F,style="grid"))
-
-
+print(summarytools::dfSummary(Desc1, valid.col=FALSE, graph.magnif=0.8, style="grid"), method = "render")
 ```
 <br>
 <br>
@@ -108,7 +104,7 @@ Step 6: Report final model
 ### Step 1: DAG
 
 This is used to identify variables that could be confounders if they are not balanced between treatment groups. 
-```{r}
+```{r fig.width = 10}
 library(DiagrammeR)
 mermaid("graph LR
         T(Treatment)-->U(Cure)
