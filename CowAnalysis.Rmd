@@ -37,6 +37,7 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 
 #Windows
 setwd("C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT")
+
 #Mac
 #setwd("~/Dropbox/R backup/Lockout - R/LOCKOUT")
 load(file="lockcowdat.Rdata")
@@ -81,7 +82,7 @@ head(Desc1, n=10)
 
 ```{r message=FALSE}
 #summarytools::dfSummary(Baseline, style='grid')
-print(summarytools::dfSummary(lockcow,valid.col=FALSE, graph.magnif=0.8, style="grid"))
+print(summarytools::dfSummary(lockcow,valid.col=FALSE, varnumbers=F, graph.magnif=0.8, style="grid",graph.col = F))
 ```
 <br>
 <br>
@@ -851,7 +852,7 @@ head(lockcowdhi, n=10)
 # Inspect data
 ```{r}
 DHIoutcome <- lockcowdhi %>% subset(select=c(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC))
-print(summarytools::dfSummary(lockcowdhi,valid.col=FALSE,graph.magnif=0.5,varnumbers=F, style="grid"))
+print(summarytools::dfSummary(lockcowdhi,valid.col=FALSE,graph.magnif=0.5,varnumbers=F, style="grid",graph.col = F))
 
 ```
 Very little missing data. Will do complete case analysis.

@@ -400,6 +400,7 @@ $(document).ready(function () {
 
 #Windows
 setwd(&quot;C:/Users/rowe0122/Dropbox/R backup/Lockout - R/LOCKOUT&quot;)
+
 #Mac
 #setwd(&quot;~/Dropbox/R backup/Lockout - R/LOCKOUT&quot;)
 load(file=&quot;lockcowdat.Rdata&quot;)
@@ -432,115 +433,103 @@ head(Desc1, n=10)</code></pre>
 <div id="inspect-data" class="section level2">
 <h2>Inspect Data</h2>
 <pre class="r"><code>#summarytools::dfSummary(Baseline, style=&#39;grid&#39;)
-print(summarytools::dfSummary(lockcow,valid.col=FALSE, graph.magnif=0.8, style=&quot;grid&quot;))</code></pre>
+print(summarytools::dfSummary(lockcow,valid.col=FALSE, varnumbers=F, graph.magnif=0.8, style=&quot;grid&quot;,graph.col = F))</code></pre>
 <pre><code>## Data Frame Summary  
 ##   
 ## Dimensions: 834 x 19  
 ## Duplicates: 0  
 ## 
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | No | Variable    | Stats / Values           | Freqs (% of Valid)  | Graph                                  | Missing |
-## +====+=============+==========================+=====================+========================================+=========+
-## | 1  | Cow         | Mean (sd) : 9.4 (1.3)    | 827 distinct values |       .       .   :                    | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |       :       : : :                    | (0%)    |
-## |    |             | 6.3 &lt; 10.1 &lt; 11.2        |                     |       :       : : :                    |         |
-## |    |             | IQR (CV) : 2.1 (0.1)     |                     |     . : :     : : :                    |         |
-## |    |             |                          |                     | . . : : : :   : : :                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 2  | FARMID      | Mean (sd) : 3 (1.3)      | 1 : 183 (21.9%)     | IIII                                   | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         | 2 :  80 ( 9.6%)     | I                                      | (0%)    |
-## |    |             | 1 &lt; 3 &lt; 5                | 3 : 289 (34.6%)     | IIIIII                                 |         |
-## |    |             | IQR (CV) : 2 (0.5)       | 4 : 149 (17.9%)     | III                                    |         |
-## |    |             |                          | 5 : 133 (16.0%)     | III                                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 3  | Enrolldate  | min : 2018-06-26         | 17 distinct values  |                 :                      | 0       |
-## |    | [Date]      | med : 2018-07-31         |                     |                 : .                    | (0%)    |
-## |    |             | max : 2018-08-22         |                     | :   .           : :                    |         |
-## |    |             | range : 1m 27d           |                     | :   : . .   . . : :                    |         |
-## |    |             |                          |                     | : . : : :   : : : :                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 4  | Tx          | 1. Orbeseal              | 415 (49.8%)         | IIIIIIIII                              | 0       |
-## |    | [factor]    | 2. Lockout               | 419 (50.2%)         | IIIIIIIIII                             | (0%)    |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 5  | Age         | Mean (sd) : 46.1 (15.5)  | 572 distinct values |   :                                    | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |   :                                    | (0%)    |
-## |    |             | 17 &lt; 44 &lt; 117            |                     |   : .                                  |         |
-## |    |             | IQR (CV) : 23.1 (0.3)    |                     |   : : : .                              |         |
-## |    |             |                          |                     |   : : : : : .                          |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 6  | Parity      | 1. 1                     | 353 (42.3%)         | IIIIIIII                               | 0       |
-## |    | [factor]    | 2. 2                     | 244 (29.3%)         | IIIII                                  | (0%)    |
-## |    |             | 3. 3                     | 151 (18.1%)         | III                                    |         |
-## |    |             | 4. 4                     |  86 (10.3%)         | II                                     |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 7  | Calv1Date   | min : 2016-02-08         | 209 distinct values |                 . :                    | 0       |
-## |    | [Date]      | med : 2017-09-19         |                     |                 : :                    | (0%)    |
-## |    |             | max : 2017-12-01         |                     |                 : :                    |         |
-## |    |             | range : 1y 9m 23d        |                     |               . : :                    |         |
-## |    |             |                          |                     |             . : : :                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 8  | MYDO        | Mean (sd) : 25.4 (9)     | 92 distinct values  |           :                            | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |         : : :                          | (0%)    |
-## |    |             | 1.8 &lt; 25.6 &lt; 49          |                     |     : : : : : .                        |         |
-## |    |             | IQR (CV) : 13.6 (0.4)    |                     |     : : : : : :                        |         |
-## |    |             |                          |                     | . : : : : : : : : .                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 9  | DIMDO       | Mean (sd) : 330.2 (67)   | 196 distinct values | :                                      | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     | :                                      | (0%)    |
-## |    |             | 256 &lt; 307 &lt; 869          |                     | : .                                    |         |
-## |    |             | IQR (CV) : 62 (0.2)      |                     | : :                                    |         |
-## |    |             |                          |                     | : : : .                                |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 10 | SCCDO       | Mean (sd) : 4.6 (1.2)    | 332 distinct values |         :                              | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |       . : .                            | (0%)    |
-## |    |             | 0 &lt; 4.6 &lt; 8.9            |                     |       : : :                            |         |
-## |    |             | IQR (CV) : 1.5 (0.3)     |                     |       : : :                            |         |
-## |    |             |                          |                     |     . : : : : .                        |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 11 | PeakSCC     | Mean (sd) : 5.8 (1.3)    | 545 distinct values |       :                                | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |       : .                              | (0%)    |
-## |    |             | 3 &lt; 5.6 &lt; 9.2            |                     |     : : : :                            |         |
-## |    |             | IQR (CV) : 1.7 (0.2)     |                     |   : : : : : : .                        |         |
-## |    |             |                          |                     | . : : : : : : : : .                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 12 | CM1         | 1. 0                     | 620 (74.3%)         | IIIIIIIIIIIIII                         | 0       |
-## |    | [factor]    | 2. 1                     | 214 (25.7%)         | IIIII                                  | (0%)    |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 13 | Calv2Date   | min : 2018-07-27         | 91 distinct values  |               . :                      | 0       |
-## |    | [Date]      | med : 2018-09-24         |                     |         . . : : :                      | (0%)    |
-## |    |             | max : 2018-11-01         |                     |     . : : : : : :                      |         |
-## |    |             | range : 3m 5d            |                     |     : : : : : : :                      |         |
-## |    |             |                          |                     | . : : : : : : : : :                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 14 | DPlength    | Mean (sd) : 54.9 (8.7)   | 50 distinct values  |       :   :                            | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |       : : :                            | (0%)    |
-## |    |             | 30 &lt; 55 &lt; 85             |                     |     . : : : .                          |         |
-## |    |             | IQR (CV) : 13 (0.2)      |                     |     : : : : :                          |         |
-## |    |             |                          |                     | . : : : : : : :                        |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 15 | RemDP       | 1 distinct value         | 0 : 834 (100.0%)    | IIIIIIIIIIIIIIIIIIII                   | 0       |
-## |    | [numeric]   |                          |                     |                                        | (0%)    |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 16 | Rem2        | Min  : 0                 | 0 : 746 (89.5%)     | IIIIIIIIIIIIIIIII                      | 0       |
-## |    | [numeric]   | Mean : 0.1               | 1 :  88 (10.5%)     | II                                     | (0%)    |
-## |    |             | Max  : 1                 |                     |                                        |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 17 | Rem2TAR     | Mean (sd) : 93.7 (20.8)  | 59 distinct values  |                   :                    | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |                   :                    | (0%)    |
-## |    |             | 0 &lt; 100 &lt; 100            |                     |                   :                    |         |
-## |    |             | IQR (CV) : 0 (0.2)       |                     |                   :                    |         |
-## |    |             |                          |                     |                   :                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 18 | CM2         | Min  : 0                 | 0 : 676 (81.1%)     | IIIIIIIIIIIIIIII                       | 0       |
-## |    | [numeric]   | Mean : 0.2               | 1 : 158 (18.9%)     | III                                    | (0%)    |
-## |    |             | Max  : 1                 |                     |                                        |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+
-## | 19 | CM2TAR      | Mean (sd) : 84.4 (30.4)  | 89 distinct values  |                   :                    | 0       |
-## |    | [numeric]   | min &lt; med &lt; max:         |                     |                   :                    | (0%)    |
-## |    |             | 0 &lt; 100 &lt; 100            |                     |                   :                    |         |
-## |    |             | IQR (CV) : 5.8 (0.4)     |                     |                   :                    |         |
-## |    |             |                          |                     | .                 :                    |         |
-## +----+-------------+--------------------------+---------------------+----------------------------------------+---------+</code></pre>
+## +-------------+--------------------------+---------------------+---------+
+## | Variable    | Stats / Values           | Freqs (% of Valid)  | Missing |
+## +=============+==========================+=====================+=========+
+## | Cow         | Mean (sd) : 9.4 (1.3)    | 827 distinct values | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 6.3 &lt; 10.1 &lt; 11.2        |                     |         |
+## |             | IQR (CV) : 2.1 (0.1)     |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | FARMID      | Mean (sd) : 3 (1.3)      | 1 : 183 (21.9%)     | 0       |
+## | [numeric]   | min &lt; med &lt; max:         | 2 :  80 ( 9.6%)     | (0%)    |
+## |             | 1 &lt; 3 &lt; 5                | 3 : 289 (34.6%)     |         |
+## |             | IQR (CV) : 2 (0.5)       | 4 : 149 (17.9%)     |         |
+## |             |                          | 5 : 133 (16.0%)     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | Enrolldate  | min : 2018-06-26         | 17 distinct values  | 0       |
+## | [Date]      | med : 2018-07-31         |                     | (0%)    |
+## |             | max : 2018-08-22         |                     |         |
+## |             | range : 1m 27d           |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | Tx          | 1. Orbeseal              | 415 (49.8%)         | 0       |
+## | [factor]    | 2. Lockout               | 419 (50.2%)         | (0%)    |
+## +-------------+--------------------------+---------------------+---------+
+## | Age         | Mean (sd) : 46.1 (15.5)  | 572 distinct values | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 17 &lt; 44 &lt; 117            |                     |         |
+## |             | IQR (CV) : 23.1 (0.3)    |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | Parity      | 1. 1                     | 353 (42.3%)         | 0       |
+## | [factor]    | 2. 2                     | 244 (29.3%)         | (0%)    |
+## |             | 3. 3                     | 151 (18.1%)         |         |
+## |             | 4. 4                     |  86 (10.3%)         |         |
+## +-------------+--------------------------+---------------------+---------+
+## | Calv1Date   | min : 2016-02-08         | 209 distinct values | 0       |
+## | [Date]      | med : 2017-09-19         |                     | (0%)    |
+## |             | max : 2017-12-01         |                     |         |
+## |             | range : 1y 9m 23d        |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | MYDO        | Mean (sd) : 25.4 (9)     | 92 distinct values  | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 1.8 &lt; 25.6 &lt; 49          |                     |         |
+## |             | IQR (CV) : 13.6 (0.4)    |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | DIMDO       | Mean (sd) : 330.2 (67)   | 196 distinct values | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 256 &lt; 307 &lt; 869          |                     |         |
+## |             | IQR (CV) : 62 (0.2)      |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | SCCDO       | Mean (sd) : 4.6 (1.2)    | 332 distinct values | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 0 &lt; 4.6 &lt; 8.9            |                     |         |
+## |             | IQR (CV) : 1.5 (0.3)     |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | PeakSCC     | Mean (sd) : 5.8 (1.3)    | 545 distinct values | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 3 &lt; 5.6 &lt; 9.2            |                     |         |
+## |             | IQR (CV) : 1.7 (0.2)     |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | CM1         | 1. 0                     | 620 (74.3%)         | 0       |
+## | [factor]    | 2. 1                     | 214 (25.7%)         | (0%)    |
+## +-------------+--------------------------+---------------------+---------+
+## | Calv2Date   | min : 2018-07-27         | 91 distinct values  | 0       |
+## | [Date]      | med : 2018-09-24         |                     | (0%)    |
+## |             | max : 2018-11-01         |                     |         |
+## |             | range : 3m 5d            |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | DPlength    | Mean (sd) : 54.9 (8.7)   | 50 distinct values  | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 30 &lt; 55 &lt; 85             |                     |         |
+## |             | IQR (CV) : 13 (0.2)      |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | RemDP       | 1 distinct value         | 0 : 834 (100.0%)    | 0       |
+## | [numeric]   |                          |                     | (0%)    |
+## +-------------+--------------------------+---------------------+---------+
+## | Rem2        | Min  : 0                 | 0 : 746 (89.5%)     | 0       |
+## | [numeric]   | Mean : 0.1               | 1 :  88 (10.5%)     | (0%)    |
+## |             | Max  : 1                 |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | Rem2TAR     | Mean (sd) : 93.7 (20.8)  | 59 distinct values  | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 0 &lt; 100 &lt; 100            |                     |         |
+## |             | IQR (CV) : 0 (0.2)       |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | CM2         | Min  : 0                 | 0 : 676 (81.1%)     | 0       |
+## | [numeric]   | Mean : 0.2               | 1 : 158 (18.9%)     | (0%)    |
+## |             | Max  : 1                 |                     |         |
+## +-------------+--------------------------+---------------------+---------+
+## | CM2TAR      | Mean (sd) : 84.4 (30.4)  | 89 distinct values  | 0       |
+## | [numeric]   | min &lt; med &lt; max:         |                     | (0%)    |
+## |             | 0 &lt; 100 &lt; 100            |                     |         |
+## |             | IQR (CV) : 5.8 (0.4)     |                     |         |
+## +-------------+--------------------------+---------------------+---------+</code></pre>
 <p><br> <br></p>
 </div>
 <div id="compare-treatment-groups" class="section level2">
@@ -1210,8 +1199,8 @@ mermaid(&quot;graph LR
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-dc99eb4e01cc41b47c6f" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-dc99eb4e01cc41b47c6f">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Clinical mastitis)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-7832bff60c105c04e3a0" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7832bff60c105c04e3a0">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Clinical mastitis)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”]</p>
 <p>Age [“Age”]</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
@@ -1631,8 +1620,8 @@ mermaid(&quot;graph LR
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-3c34d1d58f780916c053" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3c34d1d58f780916c053">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Culling or death)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-1227839b8f67b7e1214f" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1227839b8f67b7e1214f">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Culling or death)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry-off)--> T\n        P-->D\n        D-->M\n        D-->U\n        C-->D\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style A fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”]</p>
 <p>Age [“Age”]</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
@@ -1880,110 +1869,98 @@ head(lockcowdhi, n=10)</code></pre>
 <div id="inspect-data-1" class="section level1">
 <h1>Inspect data</h1>
 <pre class="r"><code>DHIoutcome &lt;- lockcowdhi %&gt;% subset(select=c(FARMID,Cow,Tx,Age,Parity,SCCDO,MYDO,DIMDO,CM1,PeakSCC,DPlength,MY,SCC))
-print(summarytools::dfSummary(lockcowdhi,valid.col=FALSE,graph.magnif=0.5,varnumbers=F, style=&quot;grid&quot;))</code></pre>
+print(summarytools::dfSummary(lockcowdhi,valid.col=FALSE,graph.magnif=0.5,varnumbers=F, style=&quot;grid&quot;,graph.col = F))</code></pre>
 <pre><code>## Data Frame Summary  
 ##   
 ## Dimensions: 2479 x 17  
 ## Duplicates: 0  
 ## 
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Variable      | Stats / Values            | Freqs (% of Valid)  | Graph                                  | Missing |
-## +===============+===========================+=====================+========================================+=========+
-## | Cow           | Mean (sd) : 9.4 (1.3)     | 795 distinct values |                   :                    | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |       :       : : :                    | (0%)    |
-## |               | 6.3 &lt; 10.1 &lt; 11.2         |                     |       :       : : :                    |         |
-## |               | IQR (CV) : 2.3 (0.1)      |                     |     . : :     : : :                    |         |
-## |               |                           |                     | . . : : : :   : : :                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | FARMID        | Mean (sd) : 2.9 (1.4)     | 1 : 581 (23.4%)     | IIII                                   | 0       |
-## | [numeric]     | min &lt; med &lt; max:          | 2 : 246 ( 9.9%)     | I                                      | (0%)    |
-## |               | 1 &lt; 3 &lt; 5                 | 3 : 824 (33.2%)     | IIIIII                                 |         |
-## |               | IQR (CV) : 2 (0.5)        | 4 : 448 (18.1%)     | III                                    |         |
-## |               |                           | 5 : 380 (15.3%)     | III                                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Enrolldate    | min : 2018-06-26          | 17 distinct values  |                 :                      | 0       |
-## | [Date]        | med : 2018-07-31          |                     |                 : .                    | (0%)    |
-## |               | max : 2018-08-22          |                     | :   :           : :                    |         |
-## |               | range : 1m 27d            |                     | :   : . .   . . : :                    |         |
-## |               |                           |                     | : . : : : . : : : :                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Tx            | 1. Orbeseal               | 1230 (49.6%)        | IIIIIIIII                              | 0       |
-## | [factor]      | 2. Lockout                | 1249 (50.4%)        | IIIIIIIIII                             | (0%)    |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Age           | Mean (sd) : 45.6 (15.1)   | 549 distinct values |   :                                    | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |   :                                    | (0%)    |
-## |               | 17 &lt; 43.6 &lt; 117           |                     |   : .                                  |         |
-## |               | IQR (CV) : 22.3 (0.3)     |                     |   : : : .                              |         |
-## |               |                           |                     |   : : : : : .                          |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Parity        | 1. 1                      | 1087 (43.9%)        | IIIIIIII                               | 0       |
-## | [factor]      | 2. 2                      |  727 (29.3%)        | IIIII                                  | (0%)    |
-## |               | 3. 3                      |  422 (17.0%)        | III                                    |         |
-## |               | 4. 4                      |  243 ( 9.8%)        | I                                      |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Calv1Date     | min : 2016-02-08          | 206 distinct values |                 . :                    | 0       |
-## | [Date]        | med : 2017-09-20          |                     |                 : :                    | (0%)    |
-## |               | max : 2017-12-01          |                     |                 : :                    |         |
-## |               | range : 1y 9m 23d         |                     |               . : :                    |         |
-## |               |                           |                     |             . : : :                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | MYDO          | Mean (sd) : 25.4 (9)      | 91 distinct values  |           :                            | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |         . : .                          | (0%)    |
-## |               | 1.8 &lt; 25.9 &lt; 49           |                     |     : : : : : .                        |         |
-## |               | IQR (CV) : 14.1 (0.4)     |                     |     : : : : : :                        |         |
-## |               |                           |                     | . : : : : : : : : .                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | DIMDO         | Mean (sd) : 327.4 (65.4)  | 191 distinct values | :                                      | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     | :                                      | (0%)    |
-## |               | 256 &lt; 305 &lt; 869           |                     | : .                                    |         |
-## |               | IQR (CV) : 55 (0.2)       |                     | : :                                    |         |
-## |               |                           |                     | : : : .                                |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | SCCDO         | Mean (sd) : 4.5 (1.2)     | 324 distinct values |         . :                            | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |         : :                            | (0%)    |
-## |               | 0 &lt; 4.5 &lt; 8.9             |                     |       . : : .                          |         |
-## |               | IQR (CV) : 1.5 (0.3)      |                     |       : : : :                          |         |
-## |               |                           |                     |     . : : : : :                        |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | PeakSCC       | Mean (sd) : 5.7 (1.2)     | 524 distinct values |       :                                | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |       : .                              | (0%)    |
-## |               | 3 &lt; 5.5 &lt; 9.2             |                     |     : : : :                            |         |
-## |               | IQR (CV) : 1.7 (0.2)      |                     |   : : : : : : .                        |         |
-## |               |                           |                     | . : : : : : : : . .                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | CM1           | 1. 0                      | 1866 (75.3%)        | IIIIIIIIIIIIIII                        | 0       |
-## | [factor]      | 2. 1                      |  613 (24.7%)        | IIII                                   | (0%)    |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | Calv2Date     | min : 2018-07-27          | 91 distinct values  |               . :                      | 0       |
-## | [Date]        | med : 2018-09-25          |                     |           . : : :                      | (0%)    |
-## |               | max : 2018-11-01          |                     |     . : : : : : :                      |         |
-## |               | range : 3m 5d             |                     |     : : : : : : :                      |         |
-## |               |                           |                     |   : : : : : : : : :                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | DPlength      | Mean (sd) : 55.3 (8.6)    | 48 distinct values  |       .   :                            | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |       : : :                            | (0%)    |
-## |               | 30 &lt; 56 &lt; 85              |                     |       : : : .                          |         |
-## |               | IQR (CV) : 13 (0.2)       |                     |     : : : : :                          |         |
-## |               |                           |                     |   : : : : : : :                        |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | SCC           | Mean (sd) : 4.1 (1.5)     | 557 distinct values |       :                                | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |       : .                              | (0%)    |
-## |               | 0 &lt; 3.8 &lt; 9.2             |                     |       : :                              |         |
-## |               | IQR (CV) : 1.7 (0.4)      |                     |     . : : :                            |         |
-## |               |                           |                     |     : : : : : . .                      |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | MY            | Mean (sd) : 43.1 (13.3)   | 140 distinct values |           : .                          | 0       |
-## | [numeric]     | min &lt; med &lt; max:          |                     |         . : :                          | (0%)    |
-## |               | 1.8 &lt; 44 &lt; 82.1           |                     |       : : : :                          |         |
-## |               | IQR (CV) : 19.1 (0.3)     |                     |     . : : : : .                        |         |
-## |               |                           |                     |   . : : : : : : .                      |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+
-## | TestDIMcat20  | 1. 0-20                   | 478 (19.3%)         | III                                    | 0       |
-## | [factor]      | 2. 21-40                  | 460 (18.6%)         | III                                    | (0%)    |
-## |               | 3. 41-60                  | 500 (20.2%)         | IIII                                   |         |
-## |               | 4. 61-80                  | 560 (22.6%)         | IIII                                   |         |
-## |               | 5. 81-100                 | 481 (19.4%)         | III                                    |         |
-## +---------------+---------------------------+---------------------+----------------------------------------+---------+</code></pre>
+## +---------------+---------------------------+---------------------+---------+
+## | Variable      | Stats / Values            | Freqs (% of Valid)  | Missing |
+## +===============+===========================+=====================+=========+
+## | Cow           | Mean (sd) : 9.4 (1.3)     | 795 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 6.3 &lt; 10.1 &lt; 11.2         |                     |         |
+## |               | IQR (CV) : 2.3 (0.1)      |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | FARMID        | Mean (sd) : 2.9 (1.4)     | 1 : 581 (23.4%)     | 0       |
+## | [numeric]     | min &lt; med &lt; max:          | 2 : 246 ( 9.9%)     | (0%)    |
+## |               | 1 &lt; 3 &lt; 5                 | 3 : 824 (33.2%)     |         |
+## |               | IQR (CV) : 2 (0.5)        | 4 : 448 (18.1%)     |         |
+## |               |                           | 5 : 380 (15.3%)     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | Enrolldate    | min : 2018-06-26          | 17 distinct values  | 0       |
+## | [Date]        | med : 2018-07-31          |                     | (0%)    |
+## |               | max : 2018-08-22          |                     |         |
+## |               | range : 1m 27d            |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | Tx            | 1. Orbeseal               | 1230 (49.6%)        | 0       |
+## | [factor]      | 2. Lockout                | 1249 (50.4%)        | (0%)    |
+## +---------------+---------------------------+---------------------+---------+
+## | Age           | Mean (sd) : 45.6 (15.1)   | 549 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 17 &lt; 43.6 &lt; 117           |                     |         |
+## |               | IQR (CV) : 22.3 (0.3)     |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | Parity        | 1. 1                      | 1087 (43.9%)        | 0       |
+## | [factor]      | 2. 2                      |  727 (29.3%)        | (0%)    |
+## |               | 3. 3                      |  422 (17.0%)        |         |
+## |               | 4. 4                      |  243 ( 9.8%)        |         |
+## +---------------+---------------------------+---------------------+---------+
+## | Calv1Date     | min : 2016-02-08          | 206 distinct values | 0       |
+## | [Date]        | med : 2017-09-20          |                     | (0%)    |
+## |               | max : 2017-12-01          |                     |         |
+## |               | range : 1y 9m 23d         |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | MYDO          | Mean (sd) : 25.4 (9)      | 91 distinct values  | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 1.8 &lt; 25.9 &lt; 49           |                     |         |
+## |               | IQR (CV) : 14.1 (0.4)     |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | DIMDO         | Mean (sd) : 327.4 (65.4)  | 191 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 256 &lt; 305 &lt; 869           |                     |         |
+## |               | IQR (CV) : 55 (0.2)       |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | SCCDO         | Mean (sd) : 4.5 (1.2)     | 324 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 0 &lt; 4.5 &lt; 8.9             |                     |         |
+## |               | IQR (CV) : 1.5 (0.3)      |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | PeakSCC       | Mean (sd) : 5.7 (1.2)     | 524 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 3 &lt; 5.5 &lt; 9.2             |                     |         |
+## |               | IQR (CV) : 1.7 (0.2)      |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | CM1           | 1. 0                      | 1866 (75.3%)        | 0       |
+## | [factor]      | 2. 1                      |  613 (24.7%)        | (0%)    |
+## +---------------+---------------------------+---------------------+---------+
+## | Calv2Date     | min : 2018-07-27          | 91 distinct values  | 0       |
+## | [Date]        | med : 2018-09-25          |                     | (0%)    |
+## |               | max : 2018-11-01          |                     |         |
+## |               | range : 3m 5d             |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | DPlength      | Mean (sd) : 55.3 (8.6)    | 48 distinct values  | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 30 &lt; 56 &lt; 85              |                     |         |
+## |               | IQR (CV) : 13 (0.2)       |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | SCC           | Mean (sd) : 4.1 (1.5)     | 557 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 0 &lt; 3.8 &lt; 9.2             |                     |         |
+## |               | IQR (CV) : 1.7 (0.4)      |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | MY            | Mean (sd) : 43.1 (13.3)   | 140 distinct values | 0       |
+## | [numeric]     | min &lt; med &lt; max:          |                     | (0%)    |
+## |               | 1.8 &lt; 44 &lt; 82.1           |                     |         |
+## |               | IQR (CV) : 19.1 (0.3)     |                     |         |
+## +---------------+---------------------------+---------------------+---------+
+## | TestDIMcat20  | 1. 0-20                   | 478 (19.3%)         | 0       |
+## | [factor]      | 2. 21-40                  | 460 (18.6%)         | (0%)    |
+## |               | 3. 41-60                  | 500 (20.2%)         |         |
+## |               | 4. 61-80                  | 560 (22.6%)         |         |
+## |               | 5. 81-100                 | 481 (19.4%)         |         |
+## +---------------+---------------------------+---------------------+---------+</code></pre>
 <p>Very little missing data. Will do complete case analysis. <br> <br> <br> <br></p>
 <div id="assessing-normality-for-continuous-outcome-variables" class="section level2">
 <h2>Assessing normality for continuous outcome variables</h2>
@@ -2054,8 +2031,8 @@ mermaid(&quot;graph LR
         style D fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-d04fc7c495a0643cb39b" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d04fc7c495a0643cb39b">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(SCC)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
+<p><div id="htmlwidget-f698d49378b6c142c3a3" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f698d49378b6c142c3a3">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(SCC)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
 <p>Parity [“Parity”] &lt;- Age not offered as correlated (will confirm)</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
 <p>Somatic cell count during previous lactation [“DOSCC” and “PeakSCC”]</p>
@@ -2436,8 +2413,8 @@ mermaid(&quot;graph LR
         style D fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-79588335d4dbfaac46ea" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-79588335d4dbfaac46ea">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Milk yield)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
+<p><div id="htmlwidget-05eeb8c9cd4334ae6b94" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-05eeb8c9cd4334ae6b94">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Milk yield)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(Days in milk at test)-->U\n        K(Days in milk at dry off) --> M\n        C-->K\n        K-->T\n        D-->T\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\n        style K fill:#FFFFFF, stroke-width:0px\n        style A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style D fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables:</p>
 <p>Parity [“Parity”] &lt;- Age not offered as correlated</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
 <p>Somatic cell count during previous lactation [“DOSCC” and “PeakSCC”]</p>

@@ -72,9 +72,9 @@ head(lockqtr, n=10)
 library(summarytools)
 
 #opts_chunk$set(comment = NA, prompt = FALSE, cache = FALSE, results = 'asis')
-print(summarytools::dfSummary(lockqtr, valid.col=FALSE,graph.magnif=0.5,varnumbers=F,style="grid"))
+print(summarytools::dfSummary(lockqtr, valid.col=FALSE,graph.magnif=1,varnumbers=F,style="grid",graph.col = F))
 
-
+?summarytools::dfSummary
 ```
 <br>
 <br>

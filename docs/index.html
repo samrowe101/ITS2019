@@ -395,163 +395,153 @@ head(lockqtr, n=10)</code></pre>
 <pre class="r"><code>library(summarytools)
 
 #opts_chunk$set(comment = NA, prompt = FALSE, cache = FALSE, results = &#39;asis&#39;)
-print(summarytools::dfSummary(lockqtr, valid.col=FALSE,graph.magnif=0.5,varnumbers=F,style=&quot;grid&quot;))</code></pre>
+print(summarytools::dfSummary(lockqtr, valid.col=FALSE,graph.magnif=1,varnumbers=F,style=&quot;grid&quot;,graph.col = F))</code></pre>
 <pre><code>## Data Frame Summary  
 ##   
 ## Dimensions: 3175 x 24  
 ## Duplicates: 0  
 ## 
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Variable    | Stats / Values                  | Freqs (% of Valid)  | Graph                                | Missing  |
-## +=============+=================================+=====================+======================================+==========+
-## | Cow         | Mean (sd) : 9.4 (1.3)           | 811 distinct values |               .   :                  | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     |       :       : : :                  | (0%)     |
-## |             | 6.3 &lt; 10.1 &lt; 11.2               |                     |       :       : : :                  |          |
-## |             | IQR (CV) : 2.1 (0.1)            |                     |     . : :     : : :                  |          |
-## |             |                                 |                     | . . : : : :   : : :                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | QTR         | 1. LF                           | 785 (24.7%)         | IIII                                 | 0        |
-## | [factor]    | 2. LR                           | 798 (25.1%)         | IIIII                                | (0%)     |
-## |             | 3. RF                           | 796 (25.1%)         | IIIII                                |          |
-## |             | 4. RR                           | 796 (25.1%)         | IIIII                                |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | FARMID      | Mean (sd) : 3 (1.3)             | 1 :  695 (21.9%)    | IIII                                 | 0        |
-## | [numeric]   | min &lt; med &lt; max:                | 2 :  298 ( 9.4%)    | I                                    | (0%)     |
-## |             | 1 &lt; 3 &lt; 5                       | 3 : 1125 (35.4%)    | IIIIIII                              |          |
-## |             | IQR (CV) : 2 (0.5)              | 4 :  551 (17.3%)    | III                                  |          |
-## |             |                                 | 5 :  506 (15.9%)    | III                                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Enrolldate  | min : 2018-06-26                | 17 distinct values  |                 :                    | 0        |
-## | [Date]      | med : 2018-07-31                |                     |                 : .                  | (0%)     |
-## |             | max : 2018-08-22                |                     | :   .           : :                  |          |
-## |             | range : 1m 27d                  |                     | :   : . .   . . : :                  |          |
-## |             |                                 |                     | : . : : :   : : : :                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Tx          | 1. Orbeseal                     | 1580 (49.8%)        | IIIIIIIII                            | 0        |
-## | [factor]    | 2. Lockout                      | 1595 (50.2%)        | IIIIIIIIII                           | (0%)     |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Age         | Mean (sd) : 46 (15.4)           | 561 distinct values |   :                                  | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     |   :                                  | (0%)     |
-## |             | 17 &lt; 43.9 &lt; 117                 |                     |   : .                                |          |
-## |             | IQR (CV) : 23.1 (0.3)           |                     |   : : : .                            |          |
-## |             |                                 |                     |   : : : : . .                        |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Parity      | 1. 1                            | 1348 (42.5%)        | IIIIIIII                             | 0        |
-## | [factor]    | 2. 2                            |  927 (29.2%)        | IIIII                                | (0%)     |
-## |             | 3. 3                            |  584 (18.4%)        | III                                  |          |
-## |             | 4. 4                            |  316 (10.0%)        | I                                    |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Calv1Date   | min : 2016-02-08                | 208 distinct values |                 . :                  | 0        |
-## | [Date]      | med : 2017-09-19                |                     |                 : :                  | (0%)     |
-## |             | max : 2017-12-01                |                     |                 : :                  |          |
-## |             | range : 1y 9m 23d               |                     |               . : :                  |          |
-## |             |                                 |                     |             . : : :                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | MYDO        | Mean (sd) : 25.4 (9)            | 92 distinct values  |           :                          | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     |       . : : :                        | (0%)     |
-## |             | 1.8 &lt; 25.9 &lt; 49                 |                     |     : : : : : .                      |          |
-## |             | IQR (CV) : 14.1 (0.4)           |                     |     : : : : : :                      |          |
-## |             |                                 |                     | . : : : : : : : : .                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | DIMDO       | Mean (sd) : 330 (65.5)          | 195 distinct values | :                                    | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     | :                                    | (0%)     |
-## |             | 256 &lt; 307 &lt; 869                 |                     | : .                                  |          |
-## |             | IQR (CV) : 62 (0.2)             |                     | : :                                  |          |
-## |             |                                 |                     | : : : .                              |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | SCCDO       | Mean (sd) : 4.6 (1.2)           | 330 distinct values |         . :                          | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     |         : :                          | (0%)     |
-## |             | 0 &lt; 4.6 &lt; 8.9                   |                     |       . : : .                        |          |
-## |             | IQR (CV) : 1.5 (0.3)            |                     |       : : : :                        |          |
-## |             |                                 |                     |     . : : : : :                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | PeakSCC     | Mean (sd) : 5.7 (1.2)           | 536 distinct values |       :                              | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     |       : .                            | (0%)     |
-## |             | 3 &lt; 5.6 &lt; 9.2                   |                     |     : : : :                          |          |
-## |             | IQR (CV) : 1.6 (0.2)            |                     |   : : : : : : .                      |          |
-## |             |                                 |                     | . : : : : : : : : .                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | CM1         | 1. 0                            | 2384 (75.1%)        | IIIIIIIIIIIIIII                      | 0        |
-## | [factor]    | 2. 1                            |  791 (24.9%)        | IIII                                 | (0%)     |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Calv2Date   | min : 2018-07-27                | 91 distinct values  |             . . :                    | 0        |
-## | [Date]      | med : 2018-09-24                |                     |           : : : :                    | (0%)     |
-## |             | max : 2018-11-01                |                     |     . : : : : : :                    |          |
-## |             | range : 3m 5d                   |                     |     : : : : : : :                    |          |
-## |             |                                 |                     | . : : : : : : : : :                  |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | DPlength    | Mean (sd) : 54.9 (8.7)          | 50 distinct values  |       :   :                          | 0        |
-## | [numeric]   | min &lt; med &lt; max:                |                     |       : : :                          | (0%)     |
-## |             | 30 &lt; 55 &lt; 85                    |                     |     . : : : .                        |          |
-## |             | IQR (CV) : 13 (0.2)             |                     |     : : : : :                        |          |
-## |             |                                 |                     | . : : : : : : :                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | DOCult1     | 1. No Growth                    | 2347 (78.0%)        | IIIIIIIIIIIIIII                      | 165      |
-## | [character] | 2. Staphylococcus chromogene    |  317 (10.5%)        | II                                   | (5.2%)   |
-## |             | 3. Staphylococcus sp.           |   82 ( 2.7%)        |                                      |          |
-## |             | 4. Bacillus sp.                 |   56 ( 1.9%)        |                                      |          |
-## |             | 5. Staphylococcus haemolytic    |   34 ( 1.1%)        |                                      |          |
-## |             | 6. Corynebacterium sp.          |   26 ( 0.9%)        |                                      |          |
-## |             | 7. Streptococcus uberis         |   22 ( 0.7%)        |                                      |          |
-## |             | 8. Streptococcus sp.            |   14 ( 0.5%)        |                                      |          |
-## |             | 9. Lactococcus garvieae         |   13 ( 0.4%)        |                                      |          |
-## |             | 10. Staphylococcus simulans     |   13 ( 0.4%)        |                                      |          |
-## |             | [ 22 others ]                   |   86 ( 2.9%)        |                                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | DOCult2     | 1. Bacillus sp.                 | 8 (21.1%)           | IIII                                 | 3137     |
-## | [character] | 2. Staphylococcus chromogene    | 8 (21.1%)           | IIII                                 | (98.8%)  |
-## |             | 3. Staphylococcus sp.           | 8 (21.1%)           | IIII                                 |          |
-## |             | 4. Streptococcus uberis         | 4 (10.5%)           | II                                   |          |
-## |             | 5. Staphylococcus haemolytic    | 2 ( 5.3%)           | I                                    |          |
-## |             | 6. Staphylococcus sciuri        | 2 ( 5.3%)           | I                                    |          |
-## |             | 7. Corynebacterium sp.          | 1 ( 2.6%)           |                                      |          |
-## |             | 8. Micrococcus sp.              | 1 ( 2.6%)           |                                      |          |
-## |             | 9. Staphylococcus xylosus/sa    | 1 ( 2.6%)           |                                      |          |
-## |             | 10. Streptococcus dysgalactia   | 1 ( 2.6%)           |                                      |          |
-## |             | [ 2 others ]                    | 2 ( 5.3%)           | I                                    |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | PCCult1     | 1. No Growth                    | 2449 (87.2%)        | IIIIIIIIIIIIIIIII                    | 368      |
-## | [character] | 2. Staphylococcus chromogene    |  100 ( 3.6%)        |                                      | (11.59%) |
-## |             | 3. Staphylococcus sp.           |   59 ( 2.1%)        |                                      |          |
-## |             | 4. Bacillus sp.                 |   56 ( 2.0%)        |                                      |          |
-## |             | 5. Staphylococcus sciuri        |   52 ( 1.9%)        |                                      |          |
-## |             | 6. Corynebacterium sp.          |   14 ( 0.5%)        |                                      |          |
-## |             | 7. Escherichia coli             |    8 ( 0.3%)        |                                      |          |
-## |             | 8. Gram negative organism       |    8 ( 0.3%)        |                                      |          |
-## |             | 9. Acinetobacter sp.            |    6 ( 0.2%)        |                                      |          |
-## |             | 10. Gram positive coccus        |    6 ( 0.2%)        |                                      |          |
-## |             | [ 19 others ]                   |   49 ( 1.8%)        |                                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | PCCult2     | 1. Bacillus sp.                 | 5 (27.8%)           | IIIII                                | 3157     |
-## | [character] | 2. Gram negative organism       | 1 ( 5.6%)           | I                                    | (99.43%) |
-## |             | 3. Staphylococcus chromogene    | 7 (38.9%)           | IIIIIII                              |          |
-## |             | 4. Staphylococcus haemolytic    | 2 (11.1%)           | II                                   |          |
-## |             | 5. Staphylococcus sciuri        | 1 ( 5.6%)           | I                                    |          |
-## |             | 6. Staphylococcus sp.           | 1 ( 5.6%)           | I                                    |          |
-## |             | 7. Streptococcus uberis         | 1 ( 5.6%)           | I                                    |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | PCSampDIM   | min : 0                         | 14 distinct values  |       :                              | 158      |
-## | [difftime]  | med : 5                         |                     |       :     .                        | (4.98%)  |
-## |             | max : 13                        |                     |     : :     :                        |          |
-## |             | units : days                    |                     |     : : : . :                        |          |
-## |             |                                 |                     | : : : : : : :                        |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | IMIDO       | Min  : 0                        | 0 : 2347 (78.0%)    | IIIIIIIIIIIIIII                      | 165      |
-## | [numeric]   | Mean : 0.2                      | 1 :  663 (22.0%)    | IIII                                 | (5.2%)   |
-## |             | Max  : 1                        |                     |                                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | IMIPC       | Min  : 0                        | 0 : 2449 (87.2%)    | IIIIIIIIIIIIIIIII                    | 368      |
-## | [numeric]   | Mean : 0.1                      | 1 :  358 (12.8%)    | II                                   | (11.59%) |
-## |             | Max  : 1                        |                     |                                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | Cure        | Min  : 0                        | 0 :  40 ( 7.1%)     | I                                    | 2613     |
-## | [numeric]   | Mean : 0.9                      | 1 : 522 (92.9%)     | IIIIIIIIIIIIIIIIII                   | (82.3%)  |
-## |             | Max  : 1                        |                     |                                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+
-## | NewIMI      | Min  : 0                        | 0 : 2371 (89.0%)    | IIIIIIIIIIIIIIIII                    | 511      |
-## | [numeric]   | Mean : 0.1                      | 1 :  293 (11.0%)    | II                                   | (16.09%) |
-## |             | Max  : 1                        |                     |                                      |          |
-## +-------------+---------------------------------+---------------------+--------------------------------------+----------+</code></pre>
+## +-------------+---------------------------------+---------------------+----------+
+## | Variable    | Stats / Values                  | Freqs (% of Valid)  | Missing  |
+## +=============+=================================+=====================+==========+
+## | Cow         | Mean (sd) : 9.4 (1.3)           | 811 distinct values | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 6.3 &lt; 10.1 &lt; 11.2               |                     |          |
+## |             | IQR (CV) : 2.1 (0.1)            |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | QTR         | 1. LF                           | 785 (24.7%)         | 0        |
+## | [factor]    | 2. LR                           | 798 (25.1%)         | (0%)     |
+## |             | 3. RF                           | 796 (25.1%)         |          |
+## |             | 4. RR                           | 796 (25.1%)         |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | FARMID      | Mean (sd) : 3 (1.3)             | 1 :  695 (21.9%)    | 0        |
+## | [numeric]   | min &lt; med &lt; max:                | 2 :  298 ( 9.4%)    | (0%)     |
+## |             | 1 &lt; 3 &lt; 5                       | 3 : 1125 (35.4%)    |          |
+## |             | IQR (CV) : 2 (0.5)              | 4 :  551 (17.3%)    |          |
+## |             |                                 | 5 :  506 (15.9%)    |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | Enrolldate  | min : 2018-06-26                | 17 distinct values  | 0        |
+## | [Date]      | med : 2018-07-31                |                     | (0%)     |
+## |             | max : 2018-08-22                |                     |          |
+## |             | range : 1m 27d                  |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | Tx          | 1. Orbeseal                     | 1580 (49.8%)        | 0        |
+## | [factor]    | 2. Lockout                      | 1595 (50.2%)        | (0%)     |
+## +-------------+---------------------------------+---------------------+----------+
+## | Age         | Mean (sd) : 46 (15.4)           | 561 distinct values | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 17 &lt; 43.9 &lt; 117                 |                     |          |
+## |             | IQR (CV) : 23.1 (0.3)           |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | Parity      | 1. 1                            | 1348 (42.5%)        | 0        |
+## | [factor]    | 2. 2                            |  927 (29.2%)        | (0%)     |
+## |             | 3. 3                            |  584 (18.4%)        |          |
+## |             | 4. 4                            |  316 (10.0%)        |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | Calv1Date   | min : 2016-02-08                | 208 distinct values | 0        |
+## | [Date]      | med : 2017-09-19                |                     | (0%)     |
+## |             | max : 2017-12-01                |                     |          |
+## |             | range : 1y 9m 23d               |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | MYDO        | Mean (sd) : 25.4 (9)            | 92 distinct values  | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 1.8 &lt; 25.9 &lt; 49                 |                     |          |
+## |             | IQR (CV) : 14.1 (0.4)           |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | DIMDO       | Mean (sd) : 330 (65.5)          | 195 distinct values | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 256 &lt; 307 &lt; 869                 |                     |          |
+## |             | IQR (CV) : 62 (0.2)             |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | SCCDO       | Mean (sd) : 4.6 (1.2)           | 330 distinct values | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 0 &lt; 4.6 &lt; 8.9                   |                     |          |
+## |             | IQR (CV) : 1.5 (0.3)            |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | PeakSCC     | Mean (sd) : 5.7 (1.2)           | 536 distinct values | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 3 &lt; 5.6 &lt; 9.2                   |                     |          |
+## |             | IQR (CV) : 1.6 (0.2)            |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | CM1         | 1. 0                            | 2384 (75.1%)        | 0        |
+## | [factor]    | 2. 1                            |  791 (24.9%)        | (0%)     |
+## +-------------+---------------------------------+---------------------+----------+
+## | Calv2Date   | min : 2018-07-27                | 91 distinct values  | 0        |
+## | [Date]      | med : 2018-09-24                |                     | (0%)     |
+## |             | max : 2018-11-01                |                     |          |
+## |             | range : 3m 5d                   |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | DPlength    | Mean (sd) : 54.9 (8.7)          | 50 distinct values  | 0        |
+## | [numeric]   | min &lt; med &lt; max:                |                     | (0%)     |
+## |             | 30 &lt; 55 &lt; 85                    |                     |          |
+## |             | IQR (CV) : 13 (0.2)             |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | DOCult1     | 1. No Growth                    | 2347 (78.0%)        | 165      |
+## | [character] | 2. Staphylococcus chromogene    |  317 (10.5%)        | (5.2%)   |
+## |             | 3. Staphylococcus sp.           |   82 ( 2.7%)        |          |
+## |             | 4. Bacillus sp.                 |   56 ( 1.9%)        |          |
+## |             | 5. Staphylococcus haemolytic    |   34 ( 1.1%)        |          |
+## |             | 6. Corynebacterium sp.          |   26 ( 0.9%)        |          |
+## |             | 7. Streptococcus uberis         |   22 ( 0.7%)        |          |
+## |             | 8. Streptococcus sp.            |   14 ( 0.5%)        |          |
+## |             | 9. Lactococcus garvieae         |   13 ( 0.4%)        |          |
+## |             | 10. Staphylococcus simulans     |   13 ( 0.4%)        |          |
+## |             | [ 22 others ]                   |   86 ( 2.9%)        |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | DOCult2     | 1. Bacillus sp.                 | 8 (21.1%)           | 3137     |
+## | [character] | 2. Staphylococcus chromogene    | 8 (21.1%)           | (98.8%)  |
+## |             | 3. Staphylococcus sp.           | 8 (21.1%)           |          |
+## |             | 4. Streptococcus uberis         | 4 (10.5%)           |          |
+## |             | 5. Staphylococcus haemolytic    | 2 ( 5.3%)           |          |
+## |             | 6. Staphylococcus sciuri        | 2 ( 5.3%)           |          |
+## |             | 7. Corynebacterium sp.          | 1 ( 2.6%)           |          |
+## |             | 8. Micrococcus sp.              | 1 ( 2.6%)           |          |
+## |             | 9. Staphylococcus xylosus/sa    | 1 ( 2.6%)           |          |
+## |             | 10. Streptococcus dysgalactia   | 1 ( 2.6%)           |          |
+## |             | [ 2 others ]                    | 2 ( 5.3%)           |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | PCCult1     | 1. No Growth                    | 2449 (87.2%)        | 368      |
+## | [character] | 2. Staphylococcus chromogene    |  100 ( 3.6%)        | (11.59%) |
+## |             | 3. Staphylococcus sp.           |   59 ( 2.1%)        |          |
+## |             | 4. Bacillus sp.                 |   56 ( 2.0%)        |          |
+## |             | 5. Staphylococcus sciuri        |   52 ( 1.9%)        |          |
+## |             | 6. Corynebacterium sp.          |   14 ( 0.5%)        |          |
+## |             | 7. Escherichia coli             |    8 ( 0.3%)        |          |
+## |             | 8. Gram negative organism       |    8 ( 0.3%)        |          |
+## |             | 9. Acinetobacter sp.            |    6 ( 0.2%)        |          |
+## |             | 10. Gram positive coccus        |    6 ( 0.2%)        |          |
+## |             | [ 19 others ]                   |   49 ( 1.8%)        |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | PCCult2     | 1. Bacillus sp.                 | 5 (27.8%)           | 3157     |
+## | [character] | 2. Gram negative organism       | 1 ( 5.6%)           | (99.43%) |
+## |             | 3. Staphylococcus chromogene    | 7 (38.9%)           |          |
+## |             | 4. Staphylococcus haemolytic    | 2 (11.1%)           |          |
+## |             | 5. Staphylococcus sciuri        | 1 ( 5.6%)           |          |
+## |             | 6. Staphylococcus sp.           | 1 ( 5.6%)           |          |
+## |             | 7. Streptococcus uberis         | 1 ( 5.6%)           |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | PCSampDIM   | min : 0                         | 14 distinct values  | 158      |
+## | [difftime]  | med : 5                         |                     | (4.98%)  |
+## |             | max : 13                        |                     |          |
+## |             | units : days                    |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | IMIDO       | Min  : 0                        | 0 : 2347 (78.0%)    | 165      |
+## | [numeric]   | Mean : 0.2                      | 1 :  663 (22.0%)    | (5.2%)   |
+## |             | Max  : 1                        |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | IMIPC       | Min  : 0                        | 0 : 2449 (87.2%)    | 368      |
+## | [numeric]   | Mean : 0.1                      | 1 :  358 (12.8%)    | (11.59%) |
+## |             | Max  : 1                        |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | Cure        | Min  : 0                        | 0 :  40 ( 7.1%)     | 2613     |
+## | [numeric]   | Mean : 0.9                      | 1 : 522 (92.9%)     | (82.3%)  |
+## |             | Max  : 1                        |                     |          |
+## +-------------+---------------------------------+---------------------+----------+
+## | NewIMI      | Min  : 0                        | 0 : 2371 (89.0%)    | 511      |
+## | [numeric]   | Mean : 0.1                      | 1 :  293 (11.0%)    | (16.09%) |
+## |             | Max  : 1                        |                     |          |
+## +-------------+---------------------------------+---------------------+----------+</code></pre>
+<pre class="r"><code>?summarytools::dfSummary</code></pre>
 <p><br> <br></p>
 </div>
 <div id="compare-treatment-groups" class="section level2">
@@ -1307,8 +1297,8 @@ style A fill:#FFFFFF, stroke-width:0px
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-43f2783cbbba28ea8306" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-43f2783cbbba28ea8306">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Cure)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        K(DIM at post calving sample) --> T\n        D-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-4bf33a0db849257d90af" style="width:672px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4bf33a0db849257d90af">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(Cure)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        K(DIM at post calving sample) --> T\n        D-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”] or Age [“Age”] &lt;- likely to correlated</p>
 <p>Yield at most recent test before dry off [“DOMY”]</p>
 <p>Somatic cell count during previous lactation [“SCCDO” and “PeakSCC”]</p>
@@ -2198,8 +2188,8 @@ style A fill:#FFFFFF, stroke-width:0px
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<div id="htmlwidget-2a33355ce28a5e63a8f4" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2a33355ce28a5e63a8f4">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(IMI at calving)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> M\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-248d2d00e3cbf667bf9f" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-248d2d00e3cbf667bf9f">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(IMI at calving)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> M\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script>
 <p>According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”] or Age [“Age”] &lt;- will use Parity</p>
 <p>Yield at most recent test before dry off [“MYDO”]</p>
@@ -3108,8 +3098,8 @@ style A fill:#FFFFFF, stroke-width:0px
         style I fill:#FFFFFF, stroke-width:0px
         style U fill:#FFFFFF, stroke-width:2px
         &quot;)</code></pre>
-<p><div id="htmlwidget-d120b1a983b055ecf3e3" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d120b1a983b055ecf3e3">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(New IMI)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->M        \n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
+<p><div id="htmlwidget-a9b650360becd780c9b9" style="width:960px;height:480px;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a9b650360becd780c9b9">{"x":{"diagram":"graph LR\n        T(Treatment)-->U(New IMI)\n        A(Age)-->T\n        P(Parity)-->T\n        M(Yield at dry-off)-->T\n        S(SCC during prev lactation)-->T\n        C(CM in prev lact)-->T\n        D(DIM at dry off) --> T\n        I(IMI at dry off) --> T\n        K(DIM at post calving sample) --> T\n        I-->U\n        P-->I\n        A-->I\n        C-->I\n        I-->S\n        I-->M\n        D-->S\n        D-->M        \n        D-->U\n        K-->U\n        A-->U\n        P-->U\n        M-->U\n        S-->U\n        C-->U\n        C-->M\n        P-->C\n        P-->S\n        P-->M\n        A-->P\n        A-->C\n        A-->S\n        A-->M\n        M-->S\n        C-->S\nstyle D fill:#FFFFFF, stroke-width:0px\nstyle K fill:#FFFFFF, stroke-width:0px\nstyle A fill:#FFFFFF, stroke-width:0px\n        style T fill:#FFFFFF, stroke-width:2px\n        style P fill:#FFFFFF, stroke-width:0px\n        style M fill:#FFFFFF, stroke-width:0px\n        style S fill:#FFFFFF, stroke-width:0px\n        style C fill:#FFFFFF, stroke-width:0px\n        style I fill:#FFFFFF, stroke-width:0px\n        style U fill:#FFFFFF, stroke-width:2px\n        "},"evals":[],"jsHooks":[]}</script> According to this DAG, I may need to control for the following variables.</p>
 <p>Parity [“Parity”] or Age [“Age”] &lt;- will use Parity</p>
 <p>Yield at most recent test before dry off [“MYDO”]</p>
 <p>Somatic cell count during previous lactation [“SCCDO” and “PeakSCC”]</p>
